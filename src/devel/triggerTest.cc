@@ -6,6 +6,7 @@
 #include "MDEv1290.hh"
 #include "MDEv977.hh"
 #include "MDEv1495.hh"
+#include "MDEv1724.hh"
 
 #include "MiceDAQMessanger.hh"
 #include "equipmentList_common.hh"
@@ -41,7 +42,7 @@ void ProcessTDC(int nEv, MDE_Pointer* dataPtr) {
 void ProcessTrigger(int nbr) {
   MDfragmentV1495 df;
   df.SetDataPtr(data_tr, nbr);
-//   df.Dump();
+  df.Dump();
 //   int nTr = df.GetNumTriggers();
 //   for (int xTr=0; xTr<nTr; xTr++) {
 //     
@@ -51,19 +52,19 @@ void ProcessTrigger(int nbr) {
 void Process(int nEv_tdc, int nbr_tr) {
   MDfragmentV1495 df;
   df.SetDataPtr(data_tr, nbr_tr);
-//   df.Dump();
+  df.Dump();
   MDE_Pointer *dataPtr = data_tdc;
   for (int xPe=0; xPe<nEv_tdc; xPe++) {
 //     cout <<"###### \n\n";
     MDpartEventV1290 pe(dataPtr);
-//     pe.Dump();
+    pe.Dump();
     ch0hits  = pe.GetLHitMeasurements(0);
     ch1hits  = pe.GetLHitMeasurements(1);
     ch14hits = pe.GetLHitMeasurements(14);
     ch15hits = pe.GetLHitMeasurements(15);
     TDCtimeTag = pe.GetTriggerTimeTag();
-//     cout << "Tr. req. (" << ch0hits.size() << ", " << ch14hits.size() << ")\n";
-//     cout << "Tr.      (" << ch1hits.size() << ", " << ch15hits.size() << ")\n";
+    cout << "Tr. req. (" << ch0hits.size() << ")\n";
+    cout << "Tr.      (" << ch1hits.size() << ")\n";
     TrigTimeTag = df.GetTriggerTime(xPe);
     dataTree->Fill();
 
@@ -136,7 +137,7 @@ int main(int argc, char** argv) {
 //////////////////////////////////////////////////////////////////////////////
 
     tdc.setParams("GEO",             11)
-                 ("BaseAddress",     0x11050000)
+                 ("BaseAddress",     0x11060000)
                  ("ChannelMask",     0xffff)
                  ("UseEventFIFO",    1)
                  ("UseExtendedTTT",  1)
@@ -163,17 +164,45 @@ int main(int argc, char** argv) {
 
 //////////////////////////////////////////////////////////////////////////////
 
+    MDEv1724 fadc1;
+    //char *test = "blah";
+    //bool *test_b;
+    fadc1.setParams("GEO",                     21)
+                   ("BaseAddress",             0x110F0000)
+                   ("PostTriggerOffset",       42)
+                   ("BUfferOrganizationCode",  V1724_OutputBufferSize_1K)
+                   ("BlockTransfEventNum",     1024)
+                   ("ChannelMask",             0xffff)
+                   ("TriggerOverlapping",      1)
+                   ("WordsPerEvent",           32)
+                   ("UseSoftwareTrigger",      1)
+                   ("UseExternalTrigger",      1)
+                   ("TriggerIOLevel",          1)
+                   ("ZSThreshold",             100);
+//                    ("ZSThreshold", 0);
+
+    if ( !fadc1.Arm() )
+      return 0;
+
+    int memSizeFadc = fadc1.getMaxMemUsed(50);
+    MDE_Pointer *data_fadc = new MDE_Pointer[memSizeFadc/4];
+    fadc1.setDataPtr(data_fadc);
+    std::cout << "Memory alocated (fADC): " << memSizeFadc << std::endl;
+
+//////////////////////////////////////////////////////////////////////////////
+
     trigger.setParams("GEO",               2)
                      ("BaseAddress",       0x11020000)
                      ("SGOpenDelay",       722050)
                      ("SGCloseDelay",      1023050)
-//                      ("SGOpenDelay",       0x1FF)
-//                      ("SGCloseDelay",      0x3FF)
-                      ("SggCtrl",           0x10F)
+//                     ("SGOpenDelay",       0x1FF)
+//                     ("SGCloseDelay",      0x3FF)
+                     ("SggCtrl",           0xF0F)
 //                     ("SggCtrl",           0x110)
-//                      ("TriggerLogicCtrl",  TRIGGER_PULS_500KHz | RAND2)
-//                      ("TriggerLogicCtrl",  TRIGGER_PULS_2KHz)
-                     ("TriggerLogicCtrl",  TRIGGER_TOF1_OR)
+//                     ("TriggerLogicCtrl",  TRIGGER_PULS_500KHz | RAND2)
+                     ("TriggerLogicCtrl",  TRIGGER_PULS_2KHz)
+//                     ("TriggerLogicCtrl",  TRIGGER_GVA)
+//                     ("TriggerLogicCtrl",  TRIGGER_TOF1_OR)
                      ("TOF0Mask",          0xfffff)
                      ("TOF1Mask",          0xfffff)
                      ("TOF2Mask",          0xfffff)
@@ -188,7 +217,7 @@ int main(int argc, char** argv) {
     std::cout << "Memory alocated (Trigger): " << memSizeTr << std::endl;
 
 //////////////////////////////////////////////////////////////////////////////
-
+/*
     vector<int> *pCh0hits = &ch0hits;
     dataTree->Branch("ch0",  "std::vector<int>", &pCh0hits);
 
@@ -204,7 +233,7 @@ int main(int argc, char** argv) {
     dataTree->Branch("TDCTT",     &TDCtimeTag,  "TDCTT/I");
     dataTree->Branch("TrTT",      &TrigTimeTag, "TrTT/I");
     dataTree->Branch("TOF1Mask",  &Tof1mask,    "TOF1Mask/I");
-
+*/
     int spillCount=0;
     while (spillCount<nEvents) {
       std::cout << "\n \nGenerating Spill gate " << spillCount << " ..." << std::endl;
@@ -215,7 +244,7 @@ int main(int argc, char** argv) {
           ioReg.ReadEventTriggerReceiver();
           if (ioReg.getEventType() == START_OF_BURST) {
             std::cout << "Event Arrived. Event type is " << ioReg.getEventTypeAsString() << std::endl;
-            trigger.softwareClear();
+//            trigger.softwareClear();
             ioReg.ReadEventTrailer();
           } else if (ioReg.getEventType() == PHYSICS_EVENT) {
             std::cout << "Event Arrived. Event type is " << ioReg.getEventTypeAsString() << std::endl;
@@ -223,8 +252,11 @@ int main(int argc, char** argv) {
 //             int nbr_tdc = tdc.ReadEvent();
             tdc.ReadEvent();
             int nEv_tr  = trigger.getNTriggers();
+            int nDw_tr = trigger.getNDW();
             int nbr_tr  = trigger.ReadEvent();
+//            cout << "nEv: " << nEv_tr << " nbr: " << nbr_tr << "  dw: " << nDw_tr << endl;
             cout << "nEv: " << nEv_tdc << "/" << nEv_tr << " (tdc/tr)\n";
+//            if (nDw_tr) ProcessTrigger(nbr_tr);
             if (nEv_tdc) {
               Process(nEv_tdc, nbr_tr);
             }

@@ -56,7 +56,7 @@ bool MiceDAQEquipment::processMismatch(int nEvts) {
     int iMis = abs(nEvts - mde_num_of_evts_);
     std::stringstream *ss = mde_messanger_->getStream(this);
     (*ss) << "Trigger Mismatch (nEvts " << nEvts << "!=" << mde_num_of_evts_ << ").\n";
-    if(iMis>1e3) {
+    if(iMis>1) {
       // Stop the Run.
       (*ss) << "Automatic run stop.";
       mde_messanger_->sendMessage(MDE_FATAL);

@@ -51,7 +51,7 @@ bool MDEv1724::Arm() {
        this->setGEO((*this)["GEO"]) &&
        this->channelsEnable((*this)["ChannelMask"] ) &&
        this->setPostTriggerOffset( (*this)["PostTriggerOffset"] ) &&
-       this->setNOutBuffers((*this)["BUfferOrganizationCode"]) &&
+       this->setNOutBuffers((*this)["BufferOrganizationCode"]) &&
        //this->setNOutBuffers(V1724_OutputBufferSize_1K) &&
        this->setWordsPerEvent((*this)["WordsPerEvent"]) &&
        this->setChConfigReg( chConfigMask ) &&
@@ -190,7 +190,7 @@ bool MDEv1724::softwareTrigger() {
 bool MDEv1724::softwareClear() {
   mde_data_32_ = 1;
   mde_current_address_ = mde_base_address_ + V1724_SW_CLEAR;
-  mde_vmeStatus_ |= VME_WRITE_16(mde_current_address_, mde_data_32_);
+  mde_vmeStatus_ |= VME_WRITE_32(mde_current_address_, mde_data_32_);
 
   //MESSAGESTREAM << " MDEv1724::softwareClear() address: " << std::hex << mde_current_address_ << std::dec;
   //mde_messanger_->sendMessage(MDE_WARNING);

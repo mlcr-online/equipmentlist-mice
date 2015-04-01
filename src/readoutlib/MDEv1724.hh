@@ -6,7 +6,7 @@
   FIRST(GEO) \
   NEXT(BaseAddress) \
   NEXT(PostTriggerOffset) \
-  NEXT(BUfferOrganizationCode) \
+  NEXT(BufferOrganizationCode) \
   NEXT(BlockTransfEventNum) \
   NEXT(ChannelMask) \
   NEXT(TriggerOverlapping) \
@@ -17,6 +17,7 @@
   NEXT(ZSThreshold)
 
 #include "MiceDAQEquipment.hh"
+#include "V1724Def.hh"
 
 class MDEv1724 : public MiceDAQEquipment {
  public:

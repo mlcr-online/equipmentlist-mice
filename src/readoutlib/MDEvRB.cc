@@ -404,7 +404,8 @@ bool MDEvRB::checkAllDBBFV() {
   }
 
   if (status == false) {
-    MESSAGESTREAM << "Unsupported firmware version (" << this_fv << ") in DBB" << i-1;
+    MESSAGESTREAM << "Unsupported firmware version (" << this_fv
+                  << " != " << supported_fv << ") in DBB" << i-1;
     mde_messanger_->sendMessage(MDE_ERROR);
   }
 

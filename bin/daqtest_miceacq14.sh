@@ -4,7 +4,7 @@
 source daqtest_def.sh
 
 # Trigger
-testEq 1495 11020000
+testEq V1495 11020000
 
 #I/O register
 testEq V977  11150000

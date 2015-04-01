@@ -193,7 +193,7 @@ bool MDEv1731::softwareTrigger() {
 bool MDEv1731::softwareClear() {
   mde_data_32_ = 1;
   mde_current_address_ = mde_base_address_ + V1731_SW_CLEAR;
-  mde_vmeStatus_ |= VME_WRITE_16(mde_current_address_, mde_data_32_);
+  mde_vmeStatus_ |= VME_WRITE_32(mde_current_address_, mde_data_32_);
 
   if( mde_vmeStatus_ != cvSuccess ) {
     mde_messanger_->sendMessage(this, "Unable to do software clear.", MDE_ERROR);

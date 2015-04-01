@@ -31,7 +31,7 @@ void ArmV1724 (char *parPtr) {
   fadc1724[geo]->setParams("GEO",                    *V1724->GEO)
                           ("BaseAddress",            getBA( V1724->BaseAddress ))
                           ("PostTriggerOffset",      *V1724->PostTriggerOffset)
-                          ("BUfferOrganizationCode", V1724_OutputBufferSize_1K)
+                          ("BufferOrganizationCode", V1724_OutputBufferSize_1K)
                           ("BlockTransfEventNum",    1024)
                           ("ChannelMask",            0xff)
                           ("TriggerOverlapping",     1)

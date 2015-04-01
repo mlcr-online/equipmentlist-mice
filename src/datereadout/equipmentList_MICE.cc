@@ -36,6 +36,7 @@ char equipmentListIdent[]="@(#)""" __FILE__ """: """ DESCRIPTION \
 #include "V1731.hh"
 #include "V1495.hh"
 #include "VRB.hh"
+#include "VCB.hh"
 #include "DBB.hh"
 #include "DBBChain.hh"
 
@@ -68,6 +69,7 @@ equipmentDescrType equipmentDescrTable[] = {
   EQUIPMENTDESCR( VLSBCosmicTrgManager ),*/
   EQUIPMENTDESCR( V1495 ),
   EQUIPMENTDESCR( VRB ),
+  EQUIPMENTDESCR( VCB ),
   EQUIPMENTDESCR( DBB ),
   EQUIPMENTDESCR( DBBChain )
 };

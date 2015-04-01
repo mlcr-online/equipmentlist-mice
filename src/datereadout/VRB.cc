@@ -25,7 +25,7 @@ void ArmVRB(char *parPtr) {
   int geodbb1 = *VRB->DBBfirstID;
   vrb[geo]->setParams("GEO",               geo)
                      ("BaseAddress",       getBA(VRB->BaseAddress) )
-                     ("DBB_FV",            decodeChar(VRB->FWversion) )
+                     ("DBB_FV",            8 /*decodeChar(VRB->FWversion)*/ )
                      ("N_DBBs",            *VRB->nDBB)
                      ("ChannelMask0_DBB1", 0xffffffff)
                      ("ChannelMask1_DBB1", 0xffffffff)

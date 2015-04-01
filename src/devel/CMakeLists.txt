@@ -34,8 +34,8 @@ endif (ROOT_FOUND AND MICEDATA_FOUND AND UNPACKING_FOUND)
 
 if (UNPACKING_FOUND AND ROOT_FOUND)
 
-#  ADD_EXECUTABLE(develtest                 develTest.cc eqTests.cc)
-#  TARGET_LINK_LIBRARIES(develtest          MICEreadout MDUnpack ${ROOT_LIBRARIES})
+  ADD_EXECUTABLE(develtest                 develTest.cc)
+  TARGET_LINK_LIBRARIES(develtest          MICEreadout MDUnpack ${ROOT_LIBRARIES})
 
   ADD_EXECUTABLE(triggerdebug                  v1495_debug.cc)
 #  ADD_EXECUTABLE(triggerdebug              triggerTest.cc)

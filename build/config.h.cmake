@@ -14,4 +14,3 @@
 #cmakedefine EPICS_PATH   "@EPICS_PATH@"
 
 #endif // CONFIG_H
-

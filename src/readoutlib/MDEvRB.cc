@@ -31,7 +31,7 @@ bool MDEvRB::Arm() {
 }
 
 bool MDEvRB::DisArm() {
-  MESSAGESTREAM << "Disarming successful.";
+  MESSAGESTREAM << "Disarming successful. \n";
   mde_messanger_->sendMessage(MDE_INFO);
   return true;
 }

@@ -32,6 +32,7 @@ void dumpTrigger(MDE_Pointer *data, int nbr) {
   MDfragmentV1495 df;
   df.SetDataPtr(data, nbr);
   df.Dump();
+
   int nTr = df.GetNumTriggers();
   for (int xTr=0; xTr<nTr; xTr++) {
     unsigned int hitsMask = df.GetPatternTOF0(xTr);
@@ -80,7 +81,7 @@ int dumpV1724(MDE_Pointer* dataPtr, int nEv) {
   for (int xPe=0; xPe<nEv; xPe++) {
 //    cout << "\n\n";
     MDpartEventV1724 pe(dataPtr);
-//    pe.Dump();
+    pe.Dump();
     for(int xCh=0;xCh<8;xCh++) {
       int n = pe.GetNSamples(xCh);
 
@@ -100,7 +101,7 @@ int dumpV1724(MDE_Pointer* dataPtr, int nEv) {
 
 int main(int argc, char** argv) {
 
-  int nEvents = 1;
+  int nEvents = 100;
   if (argc == 2 ) {
     stringstream ss;
     ss << argv[1];
@@ -114,7 +115,7 @@ int main(int argc, char** argv) {
     controler.setParams("GEO",        0)
                        ("BNumber",    0)
                        ("BLink",      0)
-                       ("FIFOMode",   1)
+                       ("FIFOMode",   0)
                        ("MaxNumEvts", 100);
 
     if ( !controler.Arm() )
@@ -141,7 +142,7 @@ int main(int argc, char** argv) {
 
     MDEv1724 fadc1;
     fadc1.setParams("GEO",                     21)
-                   ("BaseAddress",             0x11140000)
+                   ("BaseAddress",             0x11100000)
                    ("PostTriggerOffset",       42)
                    ("BufferOrganizationCode",  V1724_OutputBufferSize_1K)
                    ("BlockTransfEventNum",     1024)
@@ -157,7 +158,7 @@ int main(int argc, char** argv) {
     if ( !fadc1.Arm() )
       return 0;
 
-    int memSizeFadc = fadc1.getMaxMemUsed(50);
+    int memSizeFadc = fadc1.getMaxMemUsed(500);
     MDE_Pointer *data_fadc1 = new MDE_Pointer[memSizeFadc/4];
     fadc1.setDataPtr(data_fadc1);
     std::cout << "Memory alocated (fADC): " << memSizeFadc << std::endl;
@@ -166,7 +167,7 @@ int main(int argc, char** argv) {
 
     MDEv1290 tdc;
     tdc.setParams("GEO",             11)
-                 ("BaseAddress",     0x11060000)
+                 ("BaseAddress",     0x11090000)
                  ("ChannelMask",     0xffff)
                  ("UseEventFIFO",    1)
                  ("UseExtendedTTT",  1)
@@ -186,7 +187,7 @@ int main(int argc, char** argv) {
       return 0;
 
 //     int memSizeTdc = tdc.getMaxMemUsed(nEvents);
-    int memSizeTdc = 2048*16;
+    int memSizeTdc = 2048*16*16;
     data_tdc = new MDE_Pointer[memSizeTdc/4];
     tdc.setDataPtr(data_tdc);
     std::cout << "Memory alocated (TDC): " << memSizeTdc << std::endl;
@@ -200,12 +201,12 @@ int main(int argc, char** argv) {
                      ("SGCloseDelay",      1023050)
 //                     ("SGOpenDelay",       0x1FF)
 //                     ("SGCloseDelay",      0x3FF)
-                     ("SggCtrl",           0x10F)
+                     ("SggCtrl",           0x70F)
 //                     ("SggCtrl",           0x110)
 //                     ("TriggerLogicCtrl",  TRIGGER_PULS_20KHz | RAND1 | RAND2)
 //                     ("TriggerLogicCtrl",  TRIGGER_PULS_2KHz)
 //                     ("TriggerLogicCtrl",  TRIGGER_GVA)
-                     ("TriggerLogicCtrl",  TRIGGER_TOF1_OR)
+                     ("TriggerLogicCtrl",  TRIGGER_TOF0_OR)
                      ("TOF0Mask",          0xfffff)
                      ("TOF1Mask",          0xfffff)
                      ("TOF2Mask",          0xfffff)

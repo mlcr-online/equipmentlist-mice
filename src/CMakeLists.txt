@@ -36,6 +36,7 @@ if (CAENVME_FOUND)
 
   INCLUDE_DIRECTORIES(    ${CMAKE_CURRENT_SOURCE_DIR}/devel
                           ${CMAKE_CURRENT_SOURCE_DIR}/readoutlib
+                          ${CMAKE_CURRENT_SOURCE_DIR}/trackerlib
                           ${CMAKE_CURRENT_SOURCE_DIR}/feb_config
                           ${CMAKE_CURRENT_SOURCE_DIR}/toollib)
   LINK_DIRECTORIES(       ${EL_MICE_DIR}/lib
@@ -103,6 +104,11 @@ if (CAENVME_FOUND)
                                    ${CAENVMELIB_LIBS} \n
                                    ${EPICS_LIBS} \n)
 
+
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/readoutlib)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/trackerlib)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/devel)
+
   if (DATE_FOUND)
 
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/datereadout)
@@ -121,9 +127,6 @@ if (CAENVME_FOUND)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/toollib)
 
   endif (UNPACKING_FOUND)
-
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/readoutlib)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/devel)
 
 endif (CAENVME_FOUND)
 

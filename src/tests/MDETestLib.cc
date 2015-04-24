@@ -58,7 +58,7 @@ void SetDefaultV1731(MDEv1731 *fadc) {
 
 void SetDefaultV1724(MDEv1724 *fadc) {
   fadc->setParams("PostTriggerOffset",      42)
-                 ("BUfferOrganizationCode", 0x0A)
+                 ("BufferOrganizationCode", 0x0A)
                  ("BlockTransfEventNum",    0xff)
                  ("ChannelMask",            0xffff)
                  ("TriggerOverlapping",     1)

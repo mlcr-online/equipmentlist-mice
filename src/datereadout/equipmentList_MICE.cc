@@ -39,6 +39,10 @@ char equipmentListIdent[]="@(#)""" __FILE__ """: """ DESCRIPTION \
 #include "VCB.hh"
 #include "DBB.hh"
 #include "DBBChain.hh"
+#include "VLSB.hh"
+#include "VLSBBank.hh"
+#include "VLSBMaster.hh"
+#include "VLSBMasterTriggerHandler.hh"
 
 /*******************************************************************
 * equipmentDescrTable is an array shared with readList_equipment
@@ -62,11 +66,11 @@ equipmentDescrType equipmentDescrTable[] = {
   EQUIPMENTDESCR( V1290 ),/*
   EQUIPMENTDESCR( V1290N ),*/
   EQUIPMENTDESCR( V1724 ),
-  EQUIPMENTDESCR( V1731 ),/*,
+  EQUIPMENTDESCR( V1731 ),
   EQUIPMENTDESCR( VLSBMaster ),
   EQUIPMENTDESCR( VLSB ),
   EQUIPMENTDESCR( VLSBBank ),
-  EQUIPMENTDESCR( VLSBCosmicTrgManager ),*/
+  EQUIPMENTDESCR( VLSBMasterTriggerHandler ),
   EQUIPMENTDESCR( V1495 ),
   EQUIPMENTDESCR( VRB ),
   EQUIPMENTDESCR( VCB ),

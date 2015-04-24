@@ -28,7 +28,12 @@ ADD_EXECUTABLE(readout              equipmentList_MICE.cc
                                     VCB.cc
                                     DBB.cc
                                     DBBChain.cc
-                                    V1495.cc)
+                                    V1495.cc
+                                    VLSB.cc
+                                    VLSBBank.cc
+                                    VLSBMaster.cc
+                                    VLSBMasterTriggerHandler.cc
+)
 
 SET_TARGET_PROPERTIES(readout       PROPERTIES
                                     LINKER_LANGUAGE CXX)
@@ -40,14 +45,16 @@ if (EPICS_FOUND)
                                       ${DATE_RL_LIBS}
                                       EPICSInterface
                                       ${MYSQL_LIBS}
-                                      MICEreadout)
+                                      MICEreadout
+                                      trackerReadout)
 
 else (EPICS_FOUND)
 
   TARGET_LINK_LIBRARIES(readout       ${CAENVMELIB_LIBS}
                                       ${DATE_RL_LIBS}
                                       ${MYSQL_LIBS}
-                                      MICEreadout)
+                                      MICEreadout
+                                      trackerReadout)
 
 endif (EPICS_FOUND)
 

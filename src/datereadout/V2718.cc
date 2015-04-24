@@ -36,7 +36,7 @@ void ArmV2718(char *parPtr ) {
   controler->setParams("GEO",        0)
                       ("BNumber",    *V2718->BNumber)
                       ("BLink",      *V2718->BLink)
-                      ("FIFOMode",   1)
+                      ("FIFOMode",   0)
                       ("MaxNumEvts", *V2718->MaxNumOfEvts);
 
   if ( !controler->Arm() )

@@ -1,7 +1,6 @@
 rm CMakeCache.txt
 rm cmake_install.cmake
 rm Makefile
-rm config.h.cmake
 rm -rf CMakeFiles
 rm -rf epicsinterface
 rm -rf readoutlib

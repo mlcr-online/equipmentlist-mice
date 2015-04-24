@@ -2,6 +2,7 @@
 #include "MDEv830.hh"
 #include "MiceDAQMessanger.hh"
 #include "MiceDAQSpillStats.hh"
+#include "MiceDAQRunStats.hh"
 
 #ifdef EPICS_FOUND
   #include "MiceDAQEpicsClient.hh"
@@ -100,18 +101,12 @@ void PauseDisArmV830( char *parPtr) {}
 #ifdef EPICS_FOUND
 
 bool CallEPICS(V830_ParType * V830, MDE_Pointer *data_ptr) {
-  //spill_g = data_ptr[V830->SpillGateChannel + decodeChar( V830->UseHeader )];
-  int clock_ch = 13;
-  double spill_g = double(data_ptr[clock_ch] & 0x3FFFFFF);
-  //int spill_g = scaler->getCount(int chNum);
-
   u32 lTmpInt;
   MiceDAQMessanger *messanger = MiceDAQMessanger::Instance();
   try {
     MiceDAQEpicsClient *epics_instance = MiceDAQEpicsClient::Instance();
-    (*epics_instance)["SpillGate"]->write(spill_g);
-
-    lTmpInt = DAQCONTROL->eventCount;
+    MiceDAQRunStats *runStats = MiceDAQRunStats::Instance();
+    lTmpInt = (*runStats)["NumberOfSpills"];
     (*epics_instance)["DAQEventCount"]->write(lTmpInt);
 
     for(int chNum=0; chNum<12; chNum++) {

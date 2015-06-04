@@ -26,8 +26,10 @@ void ArmVLSB(char *parPtr) {
 
 int ReadEventVLSB(char *parPtr, struct eventHeaderStruct *header_ptr, struct equipmentHeaderStruct *eq_header_ptr, datePointer *data_ptr) {
 	MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();		
-       *(messanger->getStream()) << "Read Event VLSB ";
-	messanger->sendMessage(MDE_INFO);
+
+//       *(messanger->getStream()) << "Read Event VLSB ";
+//	messanger->sendMessage(MDE_INFO);
+
 	VLSB_ParType *vbParam = (VLSB_ParType*) parPtr;
 	int geo = *vbParam->id;
 	
@@ -37,22 +39,28 @@ int ReadEventVLSB(char *parPtr, struct eventHeaderStruct *header_ptr, struct equ
 	MDE_Pointer *data_ptr_32 = reinterpret_cast<MDE_Pointer *>(data_ptr);
 	vlsb[geo]->setDataPtr(data_ptr_32);
 
-       *(messanger->getStream()) << "Cast pointer ";
-	messanger->sendMessage(MDE_INFO);
+//       *(messanger->getStream()) << "Cast pointer ";
+//	messanger->sendMessage(MDE_INFO);
+
 	/*! Get what stage of the spill we're in and put the VLSB into the relevent mode */
 	if (header_ptr->eventType == END_OF_BURST) {
 		
-       		*(messanger->getStream()) << "EOB VLSB ";
-		messanger->sendMessage(MDE_INFO);
+//       	*(messanger->getStream()) << "EOB VLSB ";
+//		messanger->sendMessage(MDE_INFO);
+
 		dataStored = vlsb[geo]->ReadEvent("ACQUIRE");
 	}
 	else if (header_ptr->eventType == PHYSICS_EVENT) {
 		
-       		*(messanger->getStream()) << "PE VLSB ";
-		messanger->sendMessage(MDE_INFO);
+//       	*(messanger->getStream()) << "PE VLSB ";
+//		messanger->sendMessage(MDE_INFO);
+
 		eq_header_ptr->equipmentId = geo;
 		eq_header_ptr->equipmentBasicElementSize = 4;
 		dataStored = vlsb[geo]->ReadEvent("READOUT");
+	}else if(header_ptr->eventType == START_OF_BURST) {
+		
+		//dataStored = vlsb[geo]->ReadEvent("ACQUIRE");
 	}
 	/*! VLSBs do not return data */
 	return dataStored;

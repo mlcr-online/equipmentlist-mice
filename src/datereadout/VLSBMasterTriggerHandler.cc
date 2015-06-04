@@ -23,9 +23,9 @@ int ReadEventVLSBMasterTriggerHandler(char *parPtr, struct eventHeaderStruct *he
 	int dataStored = 0;
 	if (header_ptr->eventType == END_OF_BURST) {
 		
-		MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();		
-       		*(messanger->getStream()) << "Re-enabling triggers ";
-		messanger->sendMessage(MDE_INFO);	
+//		MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();		
+//              *(messanger->getStream()) << "Re-enabling triggers ";
+//		messanger->sendMessage(MDE_INFO);	
 		master->ReadEventVLSBMasterTrailer();
 	}
 	return dataStored;

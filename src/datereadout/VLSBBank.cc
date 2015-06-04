@@ -1,11 +1,12 @@
 #include "VLSBBank.hh"
 #include "MiceDAQMessanger.hh"
+#include "MiceDAQSpillStats.hh"
 
 std::vector<MDEVLSBBank *> bank (32);// = new MDEVLSBBank();
 
 void ArmVLSBBank(char *parPtr) {
 	
-	MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();	
+//	MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();	
 	//messanger->sendMessage("Arming VLSBBank",MDE_INFO);
 	/*! Get the parameter pointer */
 	VLSBBank_ParType *vbParam = (VLSBBank_ParType*) parPtr;
@@ -18,6 +19,9 @@ void ArmVLSBBank(char *parPtr) {
 	}
 	bank[geo]->SetParams("BaseAddress", getBA(vbParam->VLSBaddr));
 	bank[geo]->SetParams("BankNumber", int(*vbParam->BankNum));
+
+
+
 	
 	/*! Call the MDEVLSBBank Arm */
 	bank[geo]->Arm();
@@ -26,10 +30,14 @@ void ArmVLSBBank(char *parPtr) {
 int ReadEventVLSBBank(char *parPtr, struct eventHeaderStruct *header_ptr, struct equipmentHeaderStruct *eq_header_ptr, datePointer *data_ptr) {
 
 	MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();		
-       *(messanger->getStream()) << "Read Event VLSBBank ";
+//       *(messanger->getStream()) << "Read Event VLSBBank ";
 	//messanger->sendMessage(MDE_INFO);
+
 	VLSBBank_ParType *vbParam = (VLSBBank_ParType*) parPtr;
 	int geo = (*vbParam->VLSBid*4) + *vbParam->BankNum;
+
+//	std::cout << " ==== geo: " << geo << std::endl;
+
 	int dataStored = 0;
 	/*! Cast the pointer as 32bit because that's what all the data is */
 	MDE_Pointer *data_ptr_32 = reinterpret_cast<MDE_Pointer *>(data_ptr);
@@ -41,19 +49,24 @@ int ReadEventVLSBBank(char *parPtr, struct eventHeaderStruct *header_ptr, struct
 		eq_header_ptr->equipmentId = geo;
 		eq_header_ptr->equipmentBasicElementSize = 4;
 		
-       		*(messanger->getStream()) << "About to MDEBank ReadEvent ";
+       	//	*(messanger->getStream()) << "About to MDEBank ReadEvent ";
 	//	messanger->sendMessage(MDE_INFO);
+
 		dataStored += bank[geo]->ReadEvent();
 		
-       		*(messanger->getStream()) << "MDEBank ReadEvent ";
+       	//	*(messanger->getStream()) << "MDEBank ReadEvent ";
 	//	messanger->sendMessage(MDE_INFO);
+
+//           *(messanger->getStream()) << "Bank " << geo << " read " << dataStored << " words of data";
+//           messanger->sendMessage(MDE_INFO);
+
 	}
 	/*! Returns the number of bytes read - need to increment data pointer accordinly
 	* All values are 32bit so must increment by dataStored/4 not sizeof(int) */
-	
-       	*(messanger->getStream()) << "Bank " << geo << " read " << dataStored << " words of data";
-	messanger->sendMessage(MDE_INFO);
-	return dataStored;
+
+        ( *MiceDAQSpillStats::Instance() )["DataRecorded"] += dataStored;
+
+	return dataStored*4; // note code returns 32 bit entries, not bytes.
 }
 
 /*! Nothing is ever done here */

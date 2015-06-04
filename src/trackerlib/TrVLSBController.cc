@@ -2,6 +2,7 @@
 #include "TrVLSBController.hh"
 
 #include <iostream>
+#include <time.h>
 
 TrVLSBController::TrVLSBController() {}
 
@@ -71,14 +72,14 @@ void TrVLSBController::setReadoutMode() {
 	//int en = 0xF;
 	//CAENVME_WriteCycle(0, baseAddress + addresses["control"], &en, addressModifier, dataWidth);
 	CAENVME_WriteCycle(0, baseAddress + addresses["lvdsControl"], &lvdsSetting["disableLVDS"], addressModifier, dataWidth);
-	std::cout << "Set readout mode " << (baseAddress+addresses["lvdsControl"]) << " " << lvdsSetting["disableLVDS"] << std::endl;
+//	std::cout << "Set readout mode " << (baseAddress+addresses["lvdsControl"]) << " " << lvdsSetting["disableLVDS"] << std::endl;
 }
 
 void TrVLSBController::setDataMode() {
 	int en = 0x40;
 	CAENVME_WriteCycle(0, baseAddress + addresses["control"], &en, addressModifier, dataWidth);
 	CAENVME_WriteCycle(0, baseAddress + addresses["lvdsControl"], &lvdsSetting["enableLVDS"], addressModifier, dataWidth);
-	std::cout << "Set lvds mode " << (baseAddress+addresses["lvdsControl"]) << " " << lvdsSetting["enableLVDS"] << std::endl;
+//	std::cout << "Set lvds mode " << (baseAddress+addresses["lvdsControl"]) << " " << lvdsSetting["enableLVDS"] << std::endl;
 }
 
 int TrVLSBController::getTotalDataVolume() {
@@ -101,6 +102,9 @@ int *TrVLSBController::readAllBanks() {
 
 int TrVLSBController::readBank(int bank, int readoutMode, MDE_Pointer* dataPointer = NULL) {
 
+
+  clock_t time_start = clock();
+
 	int bytesRead = 0;
 	unsigned int address = baseAddress + addresses["bankStart"] + ((bank)*vlsbParameters["bankAddressOffset"]);
 	unsigned int addressArray[bankLengths[bank]];
@@ -115,17 +119,20 @@ int TrVLSBController::readBank(int bank, int readoutMode, MDE_Pointer* dataPoint
 		addressModifiers[word] = cvA32_U_DATA;
 		dataWidths[word] = cvD32; 	
 		address += 4;
-		//std::cout << << std::hex << address << std::endl;
+		//std::cout << std::hex << address << std::endl;
 	}
+
+	clock_t time_readout = clock();
 	try {	
 		CAENVME_MultiRead(0,addressArray, dataBuffer, nCycles, addressModifiers, dataWidths, errors);
    	}
 	catch (...) {
 		//std::cout << "Failed to multiread VME" << std::endl;
 	}
+	clock_t time_endreadout = clock();
 	//std::cout << "Printing bank contents" << std::endl;
 	for (int i=0; i<bankLengths[bank]; ++i) {
-	//	std::cout << std::hex << dataBuffer[i] << std::endl;
+		//std::cout << std::hex << dataBuffer[i] << std::endl;
 	}
 	/* Move the data from the buffer to somewher else, as required */
 	switch(readoutMode) {
@@ -144,6 +151,13 @@ int TrVLSBController::readBank(int bank, int readoutMode, MDE_Pointer* dataPoint
 			//do nothing
 			break;
 	}
+
+	clock_t time_end = clock();
+
+//	std::cout << std::dec << "Times::  PreRead: " << ((double)time_readout - time_start)/CLOCKS_PER_SEC*1E6
+//		  << " Read: " <<  ((double)time_endreadout -  time_readout)/CLOCKS_PER_SEC*1E6
+//		  << " PostRead: " << ((double)time_end - time_endreadout)/CLOCKS_PER_SEC*1E6
+//		  << std::endl;
 	//std::cout << "words " << bytesRead << std::endl;
     	return bytesRead;
 }

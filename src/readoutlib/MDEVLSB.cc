@@ -6,6 +6,11 @@ MDEVLSB::MDEVLSB() {}
 bool MDEVLSB::Arm() {
 	/*! Sets up the address map */
 	controller.initialise(parameters["BaseAddress"]);
+        
+	// Set readout mode to clar fifo when spill starts and Acquire is enabled.
+	controller.setReadoutMode();
+        controller.setDataMode();
+
         return true;
 }
 

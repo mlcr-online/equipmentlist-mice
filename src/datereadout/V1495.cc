@@ -44,19 +44,19 @@ void ArmV1495 ( char * parPtr ) {
       (*epics_instance)["TriggerCondition"]->read(trCondition);
       if ( trCondition == "GVA1" ) {
         // set output for GVA1
-        trCond_int = TRIGGER_GVA;
+        trCond_int = TRIGGER_GVA;// | EXTERNALVETO_ENABLE; // Uncomment to enable tracker veto.
       } else if ( trCondition == "TOF0" ) {
         // set output for TOF0
-        trCond_int = TRIGGER_TOF0_OR;
+        trCond_int = TRIGGER_TOF0_OR;// | EXTERNALVETO_ENABLE; // Uncomment to enable tracker veto.
       } else if ( trCondition == "TOF1" ) {
         // set output TOF1
-        trCond_int = TRIGGER_TOF1_OR;
+        trCond_int = TRIGGER_TOF1_OR;// | EXTERNALVETO_ENABLE; // Uncomment to enable tracker veto.
       } else if ( trCondition == "TOF2" ) {
         // set output TOF2
-        trCond_int = TRIGGER_TOF2_OR;
+        trCond_int = TRIGGER_TOF2_OR;// | EXTERNALVETO_ENABLE; // Uncomment to enable tracker veto.
       } else if ( trCondition == "PULSER" ) {
         // set output TOF1
-        trCond_int = TRIGGER_PULS_200KHz;
+        trCond_int = TRIGGER_PULS_20KHz;// | EXTERNALVETO_ENABLE; // Uncomment to enable tracker veto.
       } else {
         // send warning message
         messanger->sendMessage("TriggerSelector: Unknown trigger condition: " + trCondition + ".", MDE_WARNING);
@@ -110,12 +110,10 @@ int ReadEventV1495( char *parPtr, struct eventHeaderStruct *header_ptr,
 #ifdef EPICS_FOUND
 
   MiceDAQMessanger *messanger = MiceDAQMessanger::Instance();
-  i32 ntr = npart_t;
   u32 xSpill = DAQCONTROL->eventCount;
   try {
     MiceDAQEpicsClient *epics_instance = MiceDAQEpicsClient::Instance();
     if ( epics_instance->isConnected() ) {
-      (*epics_instance)["V830Ch0"]->write(ntr);
       (*epics_instance)["DAQEventCount"]->write(xSpill);
     }
   } catch(MiceDAQException lExc) {

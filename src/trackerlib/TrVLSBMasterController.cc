@@ -67,11 +67,13 @@ void TrVLSBMasterController::enableTrigger() {
 	//modeRegisterValue |= 0x80; // ignore VLSB veto
 	modeRegisterValue = 0xF4; // External trigger
 	int result = CAENVME_WriteCycle(0, baseAddress + addresses["control"], &modeRegisterValue, addressModifier, dataWidth);
-	std::cout << result << " enable" << std::endl;
-	std::cout << std::hex << (baseAddress + addresses["control"]) << " " << modeRegisterValue << std::endl;
+
+//	std::cout << result << " enable" << std::endl;
+//	std::cout << std::hex << (baseAddress + addresses["control"]) << " " << modeRegisterValue << std::endl;
 }
 
-void TrVLSBMasterController::disableTrigger() {	
+void TrVLSBMasterController::disableTrigger() {
+//        std::cout << std::hex << (baseAddress + addresses["control"]) << " " << triggerSetting["spillDisable"] << std::endl;
 	CAENVME_WriteCycle(0, baseAddress + addresses["control"], &triggerSetting["spillDisable"], addressModifier, dataWidth);
 }
 

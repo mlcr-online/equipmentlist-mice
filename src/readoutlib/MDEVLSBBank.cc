@@ -13,18 +13,21 @@ int MDEVLSBBank::ReadEvent() {
 	controller.getBankLengths();
 	
 	MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();		
-       *(messanger->getStream()) << "Got bank lengths ";
-	messanger->sendMessage(MDE_INFO);
+
+//       *(messanger->getStream()) << "Got bank lengths ";
+//	messanger->sendMessage(MDE_INFO);
+
 	//int *ptr = static_cast<int*>(mde_dataPtr_);
-	
-	//MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();		
-       *(messanger->getStream()) << "Reading bank ";
-	messanger->sendMessage(MDE_INFO);
+		
+//       *(messanger->getStream()) << "Reading bank ";
+//	messanger->sendMessage(MDE_INFO);
 	//controller.getBankLengths()
 	int dataStored = controller.readBank(parameters["BankNumber"],0,mde_dataPtr_);
-	//mde_dataPtr_ = static_cast<MDE_DataPtr*>(ptr);	
-       *(messanger->getStream()) << "Read bank ";
-	messanger->sendMessage(MDE_INFO);
+	//mde_dataPtr_ = static_cast<MDE_DataPtr*>(ptr);
+
+//       *(messanger->getStream()) << "Read bank ";
+//	messanger->sendMessage(MDE_INFO);
+
 	return dataStored;
 }
 

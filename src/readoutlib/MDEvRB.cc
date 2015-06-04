@@ -80,6 +80,7 @@ bool MDEvRB::StartDBBReadout(unsigned int dbbId) {
     } else {
       MESSAGESTREAM << "Unable to send data request for DBB" << dbbId;
       mde_messanger_->sendMessage(MDE_ERROR);
+      this->setGoodEvent(false);
 //       return false; //!!! FIX IT !!!
     }
 
@@ -103,6 +104,7 @@ bool MDEvRB::StartDBBReadout(unsigned int dbbId) {
       if(id!=1) {
         int nTriggers = this->getNTriggers(id);
         if (nTriggers != nTriggers_dbb1) {
+          this->setGoodEvent(false);
           MESSAGESTREAM << "Number of triggers mismatch in DBB" << id
                         << " (" << nTriggers << " != " << nTriggers_dbb1 << ")";
           mde_messanger_->sendMessage(MDE_ERROR);
@@ -155,6 +157,7 @@ int MDEvRB::GetDBBData(unsigned int dbbId) {
     // This is a serious error. Stop reading.
     MESSAGESTREAM << "Error in the BLT cycle. The VME error code is: " <<  getVmeStatusCodeName( mde_vmeStatus_ );
     mde_messanger_->sendMessage(MDE_ERROR);
+    return 0;
   }
 
   return nbRead;
@@ -193,6 +196,7 @@ int MDEvRB::getDBBStatus(unsigned int dbbId) {
     MESSAGESTREAM << "DBB" << dbbId << " status is 0x00 ";
     mde_messanger_->sendMessage(MDE_DEBUGGING);
   } else {
+    this->setGoodEvent(false);
     MESSAGESTREAM << "DBB" << dbbId << " status is: " << this->DbbStatusToString(st)
                   << " (0x" << std::hex << st << std::dec << ")";
     mde_messanger_->sendMessage(MDE_ERROR);

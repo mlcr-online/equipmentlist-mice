@@ -62,42 +62,26 @@ void AsynchReadVRB(char *parPtr) {}
 int ReadEventVRB(char *parPtr, struct eventHeaderStruct *header_ptr,
                  struct equipmentHeaderStruct *eq_header_ptr, datePointer *data_ptr) {
 
-  int dataStored = 0;
   if ( header_ptr->eventType == PHYSICS_EVENT || header_ptr->eventType == CALIBRATION_EVENT) {
 
     VRB_ParType *VRB = (VRB_ParType*) parPtr;
     int geo = *VRB->GEO;
     MDEvRB *this_vrb = vrb[geo];
+
+    if( !this_vrb->isGoodEvent() ){
+      return 0;
+    }
+
     int nEvts = this_vrb->getNTriggers(1);
 
     if ( !this_vrb->processMismatch(nEvts) ) {
       readList_error = SYNC_ERROR;
     }
 
-    bool start_OK = vrb[geo]->StartDBBReadout();
-
-    if ( !start_OK ) {
-      readList_error = VME_ERROR;
-
-#ifdef EPICS_FOUND
-      try {
-        MiceDAQEpicsClient *epics_instance = MiceDAQEpicsClient::Instance();
-        if( epics_instance->isConnected() )
-          (*epics_instance)["DATEState"]->write(DS_ERROR);
-
-      } catch(MiceDAQException lExc) {
-        MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();
-        messanger->sendMessage("MiceDAQEpicsClient: " + lExc.GetLocation(),    MDE_FATAL);
-        messanger->sendMessage("MiceDAQEpicsClient: " + lExc.GetDescription(), MDE_FATAL);
-      }
-#endif
-
-      return 0;
-    }
+   vrb[geo]->StartDBBReadout();
   }
 
-  ( *MiceDAQSpillStats::Instance() )["DataRecorded"] += dataStored;
-  return dataStored;
+  return 0;
 }
 
 int EventArrivedVRB(char *parPtr) {

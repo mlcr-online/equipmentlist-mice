@@ -74,6 +74,10 @@ int ReadEventDBBChain(char *parPtr, struct eventHeaderStruct *header_ptr,
       int geo = first_geo + i;
       MDEDBB *this_dbb = dbb_in_chain[geo];
 
+    if( !this_dbb->isGoodEvent() ){
+      return 0;
+    }
+
       this_dbb->setDataPtr(data_ptr_32);
       int nbRead = this_dbb->ReadEvent();
       data_ptr_32 += nbRead/sizeof(MDE_Pointer);

@@ -28,6 +28,14 @@ int ReadEventVLSBMaster(char *parPtr, struct eventHeaderStruct *header_ptr, stru
 	int dataStored = 0;
 	/*! Check the DAQ Event type */
 	if (header_ptr->eventType == PHYSICS_EVENT) {
+                short nEvts = master->getNTriggers();
+                if ( !master->processMismatch(nEvts) ) {
+                      readList_error = SYNC_ERROR;
+                }
+                short trigger_data_tdc = master->getTriggerDataTDC();
+                *data_ptr  = 0xA0000000 | (nEvts << 16 ) |  trigger_data_tdc;
+		//std::cout << "Data Ptr: " << std::hex << *data_ptr << std::endl;
+                dataStored += 4;
 		/*! Enable the vlsb master triggers */
 		master->ReadEventVLSBMaster();
 	}

@@ -20,12 +20,14 @@ class MDEVLSBMaster : public MiceDAQEquipment {
  		bool DisArmVLSBMaster();
 		int ReadEventVLSBMaster();
   		int EventArrivedVLSBMaster();
-	
+	        int getNTriggers();
   		bool DisArmVLSBMasterTrailer();
   		int ReadEventVLSBMasterTrailer();
   		int EventArrivedVLSBMasterTrailer();
 
 		void SetParams(std::string, int value);
+
+		int getTriggerDataTDC();
 
 };
 

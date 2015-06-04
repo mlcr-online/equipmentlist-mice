@@ -23,7 +23,7 @@ bool MDEv977::ArmTriggerReceiver() {
  if ( this->softwareReset() &&  // SOFTWARE RESET
       this->setInputMask(TR_EOS_EVENT_REQUEST | TR_PHYSICS_EVENT_REQUEST ) && // Mask the EOS and the Physics event trigger input.
       this->clearOutputs() && // Clear all outputs (except those set by software)
-      this->setOutput(TR_TRIGGER_BUSY) ) {  // 4.) Set all the busy outputs.
+      this->setOutput(TR_TRIGGER_BUSY) ) {  // Set all the busy outputs.
 
     // Set the first call flag.
     first_call_ = true;
@@ -45,6 +45,7 @@ bool MDEv977::ArmTriggerReceiver() {
 }
 
 bool MDEv977::DisArmTriggerReceiver() {
+  this->unsetOutput(TR_TRIGGER_MASK);
   mde_messanger_->sendMessage(this, "DisArming Trigger Receiver successful. \n", MDE_INFO);
   return true;
 }
@@ -212,6 +213,9 @@ bool MDEv977::ArmTrailer() {
 
 bool MDEv977::DisArmTrailer() {
   // This Equipment is the first to be disarmed
+  // Set all the busy outputs.
+  this->setOutput(TR_TRIGGER_BUSY);
+
   // Clear the DAQ alive
   mde_vmeStatus_ = CAENVME_ClearOutputRegister( mde_V2718_Handle_, cvOut0Bit );
 
@@ -224,6 +228,8 @@ bool MDEv977::DisArmTrailer() {
 //    lDATEStatusClient->Write("RUN_COMPLETE");
 
   mde_messanger_->sendMessage(this, "DisArming Trailer successful. \n", MDE_INFO);
+  sleep(3);
+
   return true;
 }
 

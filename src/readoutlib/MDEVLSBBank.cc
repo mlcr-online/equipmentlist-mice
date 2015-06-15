@@ -25,6 +25,13 @@ int MDEVLSBBank::ReadEvent() {
 	int dataStored = controller.readBank(parameters["BankNumber"],0,mde_dataPtr_);
 	//mde_dataPtr_ = static_cast<MDE_DataPtr*>(ptr);
 
+	if (parameters["BankNumber"] == 0)
+	  {
+	    *(messanger->getStream()) << "Board:0x" << std::hex << parameters["BaseAddress"]
+				      << " DataLength:" << std::dec << dataStored;
+	    messanger->sendMessage(MDE_INFO);
+	  }
+
 //       *(messanger->getStream()) << "Read bank ";
 //	messanger->sendMessage(MDE_INFO);
 

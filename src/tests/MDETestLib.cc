@@ -342,10 +342,11 @@ bool testV977(int ba, int duration) {
     }
   }
 
-  if (!ioReg.DisArmTriggerReceiver() )
-    return false;
 
   if( !ioReg.DisArmTrailer() )
+    return false;
+
+  if (!ioReg.DisArmTriggerReceiver() )
     return false;
 
   free(data);

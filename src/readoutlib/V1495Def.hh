@@ -53,7 +53,7 @@
 #define RAND1                 0x8000
 #define RAND2                 0xC000
 
-#define EXTERNALVETO_ENABLE   0x1000000
+#define EXTERNALVETO_ENABLE   0x10000000
 
 
 #endif

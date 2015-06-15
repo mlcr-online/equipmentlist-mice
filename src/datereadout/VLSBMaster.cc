@@ -35,6 +35,7 @@ int ReadEventVLSBMaster(char *parPtr, struct eventHeaderStruct *header_ptr, stru
                 short trigger_data_tdc = master->getTriggerDataTDC();
                 *data_ptr  = 0xA0000000 | (nEvts << 16 ) |  trigger_data_tdc;
 		//std::cout << "Data Ptr: " << std::hex << *data_ptr << std::endl;
+		std::cout << "== TriggerDataTDC ==  " << std::dec << trigger_data_tdc << std::endl;
                 dataStored += 4;
 		/*! Enable the vlsb master triggers */
 		master->ReadEventVLSBMaster();

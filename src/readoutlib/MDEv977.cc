@@ -45,6 +45,8 @@ bool MDEv977::ArmTriggerReceiver() {
 }
 
 bool MDEv977::DisArmTriggerReceiver() {
+  // The TriggerReceiver is the last to be disarmed
+  // Free all the busy outputs.
   this->unsetOutput(TR_TRIGGER_MASK);
   mde_messanger_->sendMessage(this, "DisArming Trigger Receiver successful. \n", MDE_INFO);
   return true;

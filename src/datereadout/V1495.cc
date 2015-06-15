@@ -56,7 +56,7 @@ void ArmV1495 ( char * parPtr ) {
         trCond_int = TRIGGER_TOF2_OR;// | EXTERNALVETO_ENABLE; // Uncomment to enable tracker veto.
       } else if ( trCondition == "PULSER" ) {
         // set output TOF1
-        trCond_int = TRIGGER_PULS_20KHz;// | EXTERNALVETO_ENABLE; // Uncomment to enable tracker veto.
+        trCond_int = TRIGGER_PULS_20KHz;// | EXTERNALVETO_ENABLE; // Uncomment to enable tracker veto.--
       } else {
         // send warning message
         messanger->sendMessage("TriggerSelector: Unknown trigger condition: " + trCondition + ".", MDE_WARNING);

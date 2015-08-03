@@ -10,4 +10,5 @@ rm -rf devel
 rm -rf trackerlib
 rm ../src/readoutlib/config.hh
 rm -rf tests
+rm ORIGIN
 rm *~

@@ -10,7 +10,7 @@ MiceDAQRunStats   runStats   = *MiceDAQRunStats::Instance();
 void SetDefaultTrigger(MDEv1495 *trigger){
   trigger->setParams("SGOpenDelay",      722050)
                     ("SGCloseDelay",     1023050)
-                    ("SggCtrl",          0x10F)
+                    ("SggCtrl",          0x1F0F)
                     ("TOF0Mask",         0xfffff)
                     ("TOF1Mask",         0xfffff)
                     ("TOF2Mask",         0xfffff)

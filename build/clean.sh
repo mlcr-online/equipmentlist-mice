@@ -7,6 +7,7 @@ rm -rf readoutlib
 rm -rf toollib
 rm -rf datereadout
 rm -rf devel
+rm -rf trackerlib
 rm ../src/readoutlib/config.hh
 rm -rf tests
 rm *~

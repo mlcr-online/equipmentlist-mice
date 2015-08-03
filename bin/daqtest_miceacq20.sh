@@ -22,6 +22,12 @@ testEq VCB e00b0000
 testEq VCB e00c0000
 
 # EMR fADCs
+# In case the HV of the PMTs is ON
+export ZSThresholdV1731=100
+
+# In case the HV of the PMTs is OFF
+#export ZSThresholdV1731=3
+
 testEq V1731 e00e0000
 testEq V1731 e00f0000
 testEq V1731 e0100000

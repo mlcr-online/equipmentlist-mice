@@ -10,6 +10,7 @@ int main(int argc, char** argv) {
 
   try {
     MiceDAQMessanger::Instance()->setVerbosity(1);
+  MiceDAQMessanger::Instance()->setThrowExceptionLevel(4);
     //runStats->getInfo();
     //spillStats->getInfo();
 

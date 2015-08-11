@@ -154,6 +154,8 @@ int TrVLSBController::readBank(int bank, int readoutMode, MDE_Pointer* dataPoint
 
 	clock_t time_end = clock();
 
+	verifyBankSpill(0,0,0);
+
 //	std::cout << std::dec << "Times::  PreRead: " << ((double)time_readout - time_start)/CLOCKS_PER_SEC*1E6
 //		  << " Read: " <<  ((double)time_endreadout -  time_readout)/CLOCKS_PER_SEC*1E6
 //		  << " PostRead: " << ((double)time_end - time_endreadout)/CLOCKS_PER_SEC*1E6
@@ -163,12 +165,23 @@ int TrVLSBController::readBank(int bank, int readoutMode, MDE_Pointer* dataPoint
 }
 
 int TrVLSBController::verifyBankSpill(int* dataPointer, int dataVolume, int bankNumber) {
-	int crcAddress = baseAddress + addresses["bank0CRC"];
-	int afeCRC = 0;
-	int status = CAENVME_ReadCycle( 0,crcAddress, &afeCRC, cvA32_U_DATA, cvD32); 
-	int vlsbCRC = calculateCRC(dataPointer, dataVolume);
-	int verification = (afeCRC & vlsbCRC);
-	return verification;
+  //int crcAddress = baseAddress + addresses["bank0CRC"];
+  //	int afeCRC = 0;
+  //	int status = CAENVME_ReadCycle( 0,crcAddress, &afeCRC, cvA32_U_DATA, cvD32); 
+  //	int vlsbCRC = calculateCRC(dataPointer, dataVolume);
+  //	int verification = (afeCRC & vlsbCRC);
+
+  // ED. Check the status of the fifo-status register:
+  //  - 15-12 = CRC errors
+  //  - 19-16 = Clock Phase errors
+
+  // Read VME:
+  uint32_t fifo_status(0);
+  int status = CAENVME_ReadCycle( 0,baseAddress + addresses["fifoStatus"], &fifo_status, cvA32_U_DATA, cvD32);
+
+  std::cout << "0x" << baseAddress << "   FIFO Status 0x" << std::hex << fifo_status<< std::endl;
+
+  return 0;
 }
 
 int TrVLSBController::calculateCRC(int* dataPointer, int dataVolume) {

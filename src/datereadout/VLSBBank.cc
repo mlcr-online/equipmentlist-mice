@@ -2,7 +2,7 @@
 #include "MiceDAQMessanger.hh"
 #include "MiceDAQSpillStats.hh"
 
-std::vector<MDEVLSBBank *> bank (32);// = new MDEVLSBBank();
+std::vector<MDEVLSBBank *> bank (64);// = new MDEVLSBBank();
 
 void ArmVLSBBank(char *parPtr) {
 	

@@ -1,6 +1,6 @@
 #include "VLSB.hh"
 #include "MiceDAQMessanger.hh"
-std::vector<MDEVLSB *> vlsb (8);// = new MDEVLSB();
+std::vector<MDEVLSB *> vlsb (16);// = new MDEVLSB();
 
 void ArmVLSB(char *parPtr) {
 	

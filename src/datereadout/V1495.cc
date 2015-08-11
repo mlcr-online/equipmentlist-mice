@@ -106,26 +106,6 @@ int ReadEventV1495( char *parPtr, struct eventHeaderStruct *header_ptr,
     dataStored += trigger->ReadEvent();
 
     int npart_t = trigger->getNTriggers();
-
-#ifdef EPICS_FOUND
-
-  MiceDAQMessanger *messanger = MiceDAQMessanger::Instance();
-  u32 xSpill = DAQCONTROL->eventCount;
-  try {
-    MiceDAQEpicsClient *epics_instance = MiceDAQEpicsClient::Instance();
-    if ( epics_instance->isConnected() ) {
-      (*epics_instance)["DAQEventCount"]->write(xSpill);
-    }
-  } catch(MiceDAQException lExc) {
-    messanger->sendMessage("V1495: Unable to get trigger condition.", MDE_FATAL);
-    messanger->sendMessage( lExc.GetLocation(),    MDE_FATAL);
-    messanger->sendMessage( lExc.GetDescription(), MDE_FATAL);
-    readList_error = SYNC_ERROR;
-    return 0;
-  }
-
-#endif
-
 //    MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();
 //    *(messanger->getStream(trigger)) << "Number of Particle Triggers is " << npart_t;
 //    messanger->sendMessage(MDE_INFO);

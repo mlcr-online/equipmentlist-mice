@@ -10,7 +10,7 @@ MiceDAQRunStats   runStats   = *MiceDAQRunStats::Instance();
 void SetDefaultTrigger(MDEv1495 *trigger){
   trigger->setParams("SGOpenDelay",      722050)
                     ("SGCloseDelay",     1023050)
-                    ("SggCtrl",          0x10F)
+                    ("SggCtrl",          0x1F0F)
                     ("TOF0Mask",         0xfffff)
                     ("TOF1Mask",         0xfffff)
                     ("TOF2Mask",         0xfffff)
@@ -51,9 +51,25 @@ void SetDefaultV1731(MDEv1731 *fadc) {
                  ("WordsPerEvent",          64)
                  ("UseSoftwareTrigger",     1)
                  ("UseExternalTrigger",     1)
-                 ("DualEdgeSampling",       0)
-                 ("ZSThreshold",            3);
+                 ("DualEdgeSampling",       0);
 
+  char* zs_cut_char = getenv("ZSThresholdV1731");
+  if(zs_cut_char==NULL)
+    fadc->setParams("ZSThreshold",          3);
+  else {
+    int zs_cut_int;
+
+    stringstream ss(zs_cut_char ,ios_base::out|ios_base::in );
+    ss >> zs_cut_int;
+    if (ss.fail()) {
+      MiceDAQMessanger *mde_messanger = MiceDAQMessanger::Instance();
+      *(mde_messanger->getStream(fadc)) << "ERROR in SetDefaultV1731 : The ZSThresholdV1731("
+                  << zs_cut_char << ") does not match an integer";
+      mde_messanger->sendMessage(MDE_FATAL);
+      return;
+    }
+    fadc->setParams("ZSThreshold",          zs_cut_int);
+  }
 }
 
 void SetDefaultV1724(MDEv1724 *fadc) {
@@ -64,8 +80,25 @@ void SetDefaultV1724(MDEv1724 *fadc) {
                  ("TriggerOverlapping",     1)
                  ("WordsPerEvent",          64)
                  ("UseSoftwareTrigger",     1)
-                 ("UseExternalTrigger",     1)
-                 ("ZSThreshold",            30);
+                 ("UseExternalTrigger",     1);
+
+  char* zs_cut_char = getenv("ZSThresholdV1724");
+  if(zs_cut_char==NULL)
+    fadc->setParams("ZSThreshold",          30);
+  else {
+    int zs_cut_int;
+
+    stringstream ss(zs_cut_char ,ios_base::out|ios_base::in );
+    ss >> zs_cut_int;
+    if (ss.fail()) {
+      MiceDAQMessanger *mde_messanger = MiceDAQMessanger::Instance();
+      *(mde_messanger->getStream(fadc)) << "ERROR in SetDefaultV1724 : The ZSThresholdV1724("
+                  << zs_cut_char << ") does not match an integer";
+      mde_messanger->sendMessage(MDE_FATAL);
+      return;
+    }
+    fadc->setParams("ZSThreshold",          zs_cut_int);
+  }
 }
 
 void setDefaultVRB(MDEvRB *vrb, int geodbb1) {

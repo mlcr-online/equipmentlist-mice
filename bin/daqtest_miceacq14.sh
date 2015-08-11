@@ -19,6 +19,12 @@ testEq V1290 11080000
 testEq V1290 11090000
 
 # TOF fADCs
+# In case the HV of the PMTs is ON
+export ZSThresholdV1724=200
+
+# In case the HV of the PMTs is OFF
+#export ZSThresholdV1724=30
+
 testEq V1724 110A0000
 testEq V1724 110B0000
 testEq V1724 110C0000
@@ -28,10 +34,6 @@ testEq V1724 110F0000
 testEq V1724 11100000
 testEq V1724 11110000
 testEq V1724 11120000
-
-# CKOV fADC
-testEq V1731 11140000
-
 
 endOfTests
 

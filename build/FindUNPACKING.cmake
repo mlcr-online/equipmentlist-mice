@@ -1,6 +1,6 @@
 MESSAGE(STATUS "\n Looking for UNPACKING...")
 
-FIND_PATH(UNPACKING_LIB_DIR NAMES "libMDUnpack.a"          PATHS
+FIND_PATH(UNPACKING_LIB_DIR NAMES "libMDUnpack.so"          PATHS
                                                            ../../unpacking-mice/lib/
                                                            NO_DEFAULT_PATH)
 

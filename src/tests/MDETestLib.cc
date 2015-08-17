@@ -225,12 +225,19 @@ bool testV1495(int ba) {
   MDE_Pointer *data_tr = new MDE_Pointer[memSizeTr/4];
   trigger.setDataPtr(data_tr);
 
+//  bool timeout = false;
+  time_t t1=time(NULL), t2;
+
   int spillCount=0;
   while (spillCount<nEvents) {
     std::cout << "\n \n Generating Spill gate " << spillCount << " ...\n";
 
     bool done = false;     
     while (!done) {
+      t2=time(NULL);
+      if ( (t2-t1) > 20 )
+        return false;
+
       if ( ioReg.EventArrivedTriggerReceiver() ) {
         ioReg.ReadEventTriggerReceiver();
         if (ioReg.getEventType() == START_OF_BURST) {
@@ -257,6 +264,12 @@ bool testV1495(int ba) {
     }
     spillCount++;
   }
+
+  if( !ioReg.DisArmTrailer() )
+    return false;
+
+  if (!ioReg.DisArmTriggerReceiver() )
+    return false;
 
   delete data_tr;
   delete data_io;

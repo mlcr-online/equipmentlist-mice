@@ -1,6 +1,6 @@
 #! /bin/bash
 
-#cd /dateSite/Central-Trigger/
+cd /dateSite/Central-Trigger/
 source daqtest_def.sh
 
 # Trigger
@@ -37,6 +37,6 @@ testEq V1724 11120000
 
 endOfTests
 
-
+cd -
 
 

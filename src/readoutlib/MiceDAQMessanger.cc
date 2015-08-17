@@ -124,7 +124,7 @@ void MiceDAQMessanger::processMessage(std::string message, int severity) {
 
   if(severity >= throw_exception_level_)
     throw MiceDAQException( full_message,
-                            "MiceDAQMessanger::processMessage(std::string message, int severity)",
+                            "MiceDAQMessanger::processMessage(std::string message, int severity) >> Exception",
                             severity);
 
   if (severity >= verbosity_) {

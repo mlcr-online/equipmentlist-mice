@@ -1,6 +1,6 @@
 #! /bin/bash
 
-cd /dateSite/Central-Trigger/
+cd /dateSite/EMCal-EMR/
 source daqtest_def.sh
 
 #I/O register
@@ -37,6 +37,6 @@ testEq V1731 e0130000
 
 endOfTests
 
-
+cd -
 
 

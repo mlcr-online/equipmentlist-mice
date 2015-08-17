@@ -54,7 +54,7 @@ bool MDEv2718::Init() {
 
   if( mde_vmeStatus_ != cvSuccess ) {
     MESSAGESTREAM << "Unable to initialize. Status: " << mde_vmeStatus_;
-    mde_messanger_->sendMessage(MDE_FATAL);
+    mde_messanger_->sendMessage(MDE_ERROR);
     mde_messanger_->sendMessage(this, "Check that the crate is ON and the controller is connected.",
                                   MDE_FATAL);
     return false;

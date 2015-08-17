@@ -1,6 +1,6 @@
 #! /bin/bash
 
-#cd /dateSite/EMCal-KL /
+cd /dateSite/EMCal-KL/
 source daqtest_def.sh
 
 #I/O register
@@ -38,6 +38,6 @@ testEq V1731 21110000
 
 endOfTests
 
-
+cd -
 
 

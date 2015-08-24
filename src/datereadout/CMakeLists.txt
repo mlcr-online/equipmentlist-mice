@@ -45,16 +45,14 @@ if (EPICS_FOUND)
                                       ${DATE_RL_LIBS}
                                       EPICSInterface
                                       ${MYSQL_LIBS}
-                                      MICEreadout
-                                      trackerReadout)
+                                      MICEreadout)
 
 else (EPICS_FOUND)
 
   TARGET_LINK_LIBRARIES(readout       ${CAENVMELIB_LIBS}
                                       ${DATE_RL_LIBS}
                                       ${MYSQL_LIBS}
-                                      MICEreadout
-                                      trackerReadout)
+                                      MICEreadout)
 
 endif (EPICS_FOUND)
 

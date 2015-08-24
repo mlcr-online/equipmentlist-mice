@@ -106,7 +106,6 @@ if (CAENVME_FOUND)
 
 
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/readoutlib)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/trackerlib)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/devel)
 
   if (DATE_FOUND)

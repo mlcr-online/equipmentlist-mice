@@ -17,12 +17,13 @@ void ArmVLSBBank(char *parPtr) {
 	//	messanger->sendMessage("Making new MDE BANK",MDE_INFO);
 		bank[geo] = new MDEVLSBBank();
 	}
-	bank[geo]->SetParams("BaseAddress", getBA(vbParam->VLSBaddr));
-	bank[geo]->SetParams("BankNumber", int(*vbParam->BankNum));
 
+        bank[geo]->setParams("GEO", geo);
+	bank[geo]->setParams("BaseAddress", getBA(vbParam->VLSBaddr));
+	bank[geo]->setParams("BankNumber", int(*vbParam->BankNum));
+  	bank[geo]->setParams("VLSBid", *vbParam->VLSBid);
+  	bank[geo]->setParams("VLSBBank", *vbParam->BankNum);
 
-
-	
 	/*! Call the MDEVLSBBank Arm */
 	bank[geo]->Arm();
 }

@@ -42,10 +42,11 @@ class MDEVLSB : public MiceDAQEquipment {
 
   // Load the number of encoded triggers:
   int GetTriggerCount();
+  int GetTriggerDataTDC();
 
 
   //TODO:  Other functions:
-  int getFirmwareV();
+  int GetFirmwareV();
 
   IMPLEMENT_PARAMS(VLSBParams, MDEVLSB)
 

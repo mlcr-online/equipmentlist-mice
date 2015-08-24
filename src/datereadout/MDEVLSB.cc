@@ -29,12 +29,10 @@ bool MDEVLSB::Arm()
   mde_base_address_ = (*this)["BaseAddress"];
 
   // Perform Setup tasks:
-  bool Status = this->DisableLVDS();
-  if ( (*this)["Master"] )
-    {
-      Status &= this->DisableTrigger() ;
-    }
+  bool Status (true);
 
+  Status = ( this->DisableLVDS() && \
+             this->DisableTrigger() );
 
   if ( Status )
     {
@@ -52,12 +50,11 @@ bool MDEVLSB::Arm()
 bool MDEVLSB::DisArm()
 {
 
-  bool Status = this->DisableLVDS();
-  if ( (*this)["Master"] )
-    {
-      Status &= this->DisableTrigger() ;
-    }
-             
+  // Perform Setup tasks:
+  bool Status (true);
+
+  Status = ( this->DisableLVDS() && \
+             this->DisableTrigger() );
 
   if ( Status )
     {
@@ -70,7 +67,6 @@ bool MDEVLSB::DisArm()
       return false;
     }
 
-   return Status;
 }
 
 // __________________________________________________________________________________
@@ -201,7 +197,7 @@ bool MDEVLSB::EnableTrigger()
     }
 }
 
-int MDEVLSB::GetFirmwareV()
+int MDEVLSB::getFirmwareV()
 {
 	mde_current_address_ = mde_base_address_ + VLSB_FIRMWARE_VERS;
 
@@ -229,19 +225,5 @@ int MDEVLSB::GetTriggerCount()
 	}
 
 	return mde_data_32_;
-}
 
-int MDEVLSB::GetTriggerDataTDC()
-{
-	mde_current_address_ = mde_base_address_ + VLSB_TRIGGER_TDC;
-	mde_data_32_ = 0;
-
-	mde_vmeStatus_ = VME_READ_32(mde_current_address_, &mde_data_32_);
-
-	if ( mde_vmeStatus_ != cvSuccess ) {
-		mde_messanger_->sendMessage(this, "Unable to read TriggerDataTDC register", MDE_INFO);
-		return 0;
-	}
-
-	return mde_data_32_;
 }

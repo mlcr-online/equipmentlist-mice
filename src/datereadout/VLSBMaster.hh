@@ -4,7 +4,6 @@
 
 #include "DATEIncludes.hh"
 #include "equipmentList_common.hh"
-#include "MDEVLSBMaster.hh"
 
 /*! The struct containing the relevant information about the equipment
 * retrieved from the DATE database */

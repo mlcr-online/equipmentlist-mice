@@ -1,6 +1,7 @@
+#include "VLSB.hh"
 #include "VLSBMaster.hh"
 #include "MiceDAQMessanger.hh"
-MDEVLSBMaster *master = new MDEVLSBMaster();
+MDEVLSB *master = new MDEVLSB();
 
 void ArmVLSBMaster(char *parPtr) {
 	
@@ -10,7 +11,11 @@ void ArmVLSBMaster(char *parPtr) {
 	/*! Get the parameter pointer */
 	VLSBMaster_ParType *vmParam = (VLSBMaster_ParType*) parPtr;
 	/*! Fill the master with the parameters */
-	master->SetParams("BaseAddress", getBA(vmParam->baseAddr));
+        master->setParams("GEO", 0);
+	master->setParams("BaseAddress", getBA(vmParam->baseAddr));
+        master->setParams("VLSBid", 0);
+        master->setParams("Master", 1);
+        master->setParams("UseInternalTrigger", 0);
 	/*! Call the arm (setup addresses) function */
 	*(messanger->getStream()) << "Master base address " << getBA(vmParam->baseAddr);
 	messanger->sendMessage(MDE_INFO);
@@ -28,19 +33,23 @@ int ReadEventVLSBMaster(char *parPtr, struct eventHeaderStruct *header_ptr, stru
 	int dataStored = 0;
 	/*! Check the DAQ Event type */
 	if (header_ptr->eventType == PHYSICS_EVENT) {
-                short nEvts = master->getNTriggers();
+                short nEvts = master->GetTriggerCount();
                 if ( !master->processMismatch(nEvts) ) {
                       readList_error = SYNC_ERROR;
                 }
-                short trigger_data_tdc = master->getTriggerDataTDC();
+                short trigger_data_tdc = master->GetTriggerDataTDC();
                 *data_ptr  = 0xA0000000 | (nEvts << 16 ) |  trigger_data_tdc;
 		//std::cout << "Data Ptr: " << std::hex << *data_ptr << std::endl;
 		std::cout << "== TriggerDataTDC ==  " << std::dec << trigger_data_tdc << std::endl;
                 dataStored += 4;
-		/*! Enable the vlsb master triggers */
-		master->ReadEventVLSBMaster();
+		/*! Disable the vlsb master triggers */
+		master->DisableTrigger();
 	}
-	/*! No data returned */
+
+	else if (header_ptr->eventType == START_OF_BURST) {
+		master->EnableTrigger();
+	}
+
 	return dataStored;
 }
 

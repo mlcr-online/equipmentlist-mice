@@ -37,8 +37,8 @@ if (UNPACKING_FOUND AND ROOT_FOUND)
   ADD_EXECUTABLE(develtest                 develTest.cc)
   TARGET_LINK_LIBRARIES(develtest          MICEreadout MDUnpack ${ROOT_LIBRARIES})
 
-  ADD_EXECUTABLE(trackerTest                 trackerTest.cc)
-  TARGET_LINK_LIBRARIES(trackerTest          trackerReadout MICEreadout MDUnpack ${ROOT_LIBRARIES})
+#  ADD_EXECUTABLE(trackerTest                 trackerTest.cc)
+#  TARGET_LINK_LIBRARIES(trackerTest          trackerReadout MICEreadout MDUnpack ${ROOT_LIBRARIES})
 
   ADD_EXECUTABLE(triggerdebug                  v1495_debug.cc)
 #  ADD_EXECUTABLE(triggerdebug              triggerTest.cc)

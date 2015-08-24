@@ -1,13 +1,14 @@
-#include "VLSBMasterTrailer.hh"
-#include "VLSBMaster.hh"
+//#include "VLSBMasterTrailer.hh"
+//#include "VLSBMaster.hh"
 
 //MDEVLSBMaster *master = new MDEVLSBMaster();
-extern MDEVLSBMaster *master;
+//extern MDEVLSBMaster *master;
 
 void ArmVLSBMasterTrailer(char *parPtr) {	
-	VLSBMaster_ParType *vmParam = (VLSBMaster_ParType*) parPtr;
-	master->setParams("BaseAddress", getBA(vmParam->BaseAddress));
-	master->Arm();
+	//VLSBMaster_ParType *vmParam = (VLSBMaster_ParType*) parPtr;
+	//master->setParams("BaseAddress", getBA(vmParam->BaseAddress));
+	//master->Arm();
+	return;
 }
 
 void DisArmVLSBMasterTrailer(char *parPtr) {}
@@ -15,11 +16,13 @@ void AsynchReadVLSBMasterTrailer(char *parPtr) {}
 
 int ReadEventVLSBMasterTrailer(char *parPtr, struct eventHeaderStruct *header_ptr, struct equipmentHeaderStruct *eq_header_ptrs, datePointer *data_ptr) {
 
-	int dataStored = 0;
-	if (header_ptr->eventType == START_OF_BURST) {
-		master->ReadEventVLSBMasterTrailer();
-	}
-	return dataStored;
+	//int dataStored = 0;
+	//if (header_ptr->eventType == START_OF_BURST) {
+	//	master->ReadEventVLSBMasterTrailer();
+	//}
+	//return dataStored;
+
+	return 0;
 }
 
 int EventArrivedVLSBMasterTrailer(char *parPtr) {

@@ -1,46 +1,55 @@
-#include <string>
-#include <map>
+#ifndef _MDEVLSB
+#define _MDEVLSB 1
+
+
+#define VLSBParams(FIRST, NEXT) \
+  FIRST(GEO) \
+  NEXT(BaseAddress) \
+  NEXT(VLSBid) \
+  NEXT(Master) \
+  NEXT(UseInternalTrigger)
+
 #include "MiceDAQEquipment.hh"
-#include "TrVLSBController.hh"
 
-#ifndef MDEVLSB_HH
-#define MDEVLSB_HH
 
-/*! MICE data event class for the VSLB. Inherits from MiceDAQEquipment for DATE specific 
-* functions, and has a TrVLSBController as a member for VLSB hardware functions */
 class MDEVLSB : public MiceDAQEquipment {
-	private:
-		/*! The controller which understands all
-		* the registers in the VLSB */
-		TrVLSBController controller;
-		std::map<std::string, int> parameters;
 
-	public:
-		/*! Constructor */
-		MDEVLSB();
 
-		/*! Desctructor */
-		~MDEVLSB() {};
-		
-		/* Arm - Addresses are set up, not VME communication
-		* \return True */
- 		bool Arm();
+ public:
+  MDEVLSB();
+  ~MDEVLSB() {}
 
-		/* Disarm - nothing is done here
-		* \return True */
- 		bool DisArm();
+  // DAQ Stuff:
+  bool Arm();
+  bool DisArm();
 
-		/* Spill data has closed and DAQ readout begins
-		* VLSB moved from LVDS open "acquire" mode to VME readout
-		* \param Mode - options are "ACQUIRE" to accept data or "READOUT" to readout
-		* \return NumberOfBytesRead */
-		int ReadEvent(std::string);
+  // TODO: Implement these functions:
+  //int ReadEvent();
+  //int EventArrived();
+  //int getNTriggers();
+  // TODO: Clarify byte/32bit word count. Note that in the
+  // date data size size is in bytes.
 
-		/* Never called for VLSB equipment type */
-  		int EventArrived();
+  // Start/Stop Data Taking Operations:
+  bool EnableAquisition();
+  bool DisableAquisition();
 
-		void SetParams(std::string, int);
-	
+  // Base Operations:
+  bool DisableLVDS();
+  bool EnableLVDS();
+  bool DisableTrigger();
+  bool EnableTrigger();
+
+  // Load the number of encoded triggers:
+  int GetTriggerCount();
+
+
+  //TODO:  Other functions:
+  int getFirmwareV();
+
+  IMPLEMENT_PARAMS(VLSBParams, MDEVLSB)
+
 };
+
 
 #endif

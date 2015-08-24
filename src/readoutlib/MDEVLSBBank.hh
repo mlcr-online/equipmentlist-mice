@@ -1,41 +1,38 @@
+#ifndef _MDEVLSBBANK
+#define _MDEVLSBBANK 1
+
+
+#define VLSBBankParams(FIRST, NEXT) \
+  FIRST(GEO) \
+  NEXT(BaseAddress) \
+  NEXT(VLSBid) \
+  NEXT(VLSBBank)
+
 #include "MiceDAQEquipment.hh"
-#include "TrVLSBController.hh"
-
-#ifndef MDEVLSBBANK_HH
-#define MDEVLSBBANK_HH
 
 
-/*! MICE Data Event class for the VLSBBank, which reads out tracker VLSB data
-* Inherits from MiceDAQEquipment which contains the data pointer
-* which must be set */
 class MDEVLSBBank : public MiceDAQEquipment {
-	private:
-		/*! The controller which understands all
-		* the registers in the VLSBBank */
-		TrVLSBController controller;
-		std::map<std::string, int> parameters;
-	public:
-		MDEVLSBBank();
-		~MDEVLSBBank() {};
-		
-		/*! Calls the controller initialise which sets up addresses
-		* \return True */
- 		bool Arm();
-		
-		/*! Placeholder
-		* \return True */
- 		bool DisArm();
 
-		/*! Read out the event for this bank using the in-built pointer 
-		* \return numberBytesRead */
-		int ReadEvent();
-		
-		/*! Not used - only TriggerReceiver has this function
-		* \return 0 */
-  		int EventArrived();
+ public:
+  MDEVLSBBank();
+  ~MDEVLSBBank() {}
 
-		void SetParams(std::string, int);
-	
+  bool Arm();
+  int ReadEvent();
+
+  // Bank IO:
+  int ReadBank();
+  int ReadFIFOStatus();
+  uint32_t ReadBankLength();
+  bool ReadBankData(MDE_Pointer *dataPtr, uint32_t BankLength);
+
+  // Read the status of the FIFO, after the data was readout.
+  bool FIFOOK();
+
+ private:
+
+  IMPLEMENT_PARAMS(VLSBBankParams, MDEVLSBBank)
+
 };
 
 #endif

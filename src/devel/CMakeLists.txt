@@ -37,8 +37,14 @@ if (UNPACKING_FOUND AND ROOT_FOUND)
   ADD_EXECUTABLE(develtest                 develTest.cc)
   TARGET_LINK_LIBRARIES(develtest          MICEreadout MDUnpack ${ROOT_LIBRARIES})
 
+# Note this is an executable from davids orginal code,
+# its no longer supported.
 #  ADD_EXECUTABLE(trackerTest                 trackerTest.cc)
 #  TARGET_LINK_LIBRARIES(trackerTest          trackerReadout MICEreadout MDUnpack ${ROOT_LIBRARIES})
+
+
+   ADD_EXECUTABLE(trackerReadout          trackerReadout.cc)
+   TARGET_LINK_LIBRARIES(trackerReadout       MICEreadout MDUnpack ${ROOT_LIBRARIES} rt)
 
   ADD_EXECUTABLE(triggerdebug                  v1495_debug.cc)
 #  ADD_EXECUTABLE(triggerdebug              triggerTest.cc)

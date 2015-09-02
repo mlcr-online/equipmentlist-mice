@@ -6,26 +6,30 @@ std::vector<MDEVLSBBank *> bank (64);// = new MDEVLSBBank();
 
 void ArmVLSBBank(char *parPtr) {
 	
-//	MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();	
-	//messanger->sendMessage("Arming VLSBBank",MDE_INFO);
+	MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();	
+	messanger->sendMessage("Arming VLSBBank",MDE_INFO);
 	/*! Get the parameter pointer */
 	VLSBBank_ParType *vbParam = (VLSBBank_ParType*) parPtr;
 	/*! Fill the parameters */
 	int geo = (*vbParam->VLSBid*4) + *vbParam->BankNum;
 	
 	if (!bank[geo]) {
-	//	messanger->sendMessage("Making new MDE BANK",MDE_INFO);
+		messanger->sendMessage("Making new MDE BANK",MDE_INFO);
 		bank[geo] = new MDEVLSBBank();
 	}
 
+	messanger->sendMessage("Setting params....",MDE_INFO);
+
         bank[geo]->setParams("GEO", geo);
 	bank[geo]->setParams("BaseAddress", getBA(vbParam->VLSBaddr));
-	bank[geo]->setParams("BankNumber", int(*vbParam->BankNum));
+	//bank[geo]->setParams("BankNumber", int(*vbParam->BankNum));
   	bank[geo]->setParams("VLSBid", *vbParam->VLSBid);
   	bank[geo]->setParams("VLSBBank", *vbParam->BankNum);
 
+        messanger->sendMessage("Calling arm...",MDE_INFO);
 	/*! Call the MDEVLSBBank Arm */
 	bank[geo]->Arm();
+        messanger->sendMessage("..Done",MDE_INFO);
 }
 
 int ReadEventVLSBBank(char *parPtr, struct eventHeaderStruct *header_ptr, struct equipmentHeaderStruct *eq_header_ptr, datePointer *data_ptr) {

@@ -41,8 +41,6 @@ int ReadEventVLSBBank(char *parPtr, struct eventHeaderStruct *header_ptr, struct
 	VLSBBank_ParType *vbParam = (VLSBBank_ParType*) parPtr;
 	int geo = (*vbParam->VLSBid*4) + *vbParam->BankNum;
 
-//	std::cout << " ==== geo: " << geo << std::endl;
-
 	int dataStored = 0;
 	/*! Cast the pointer as 32bit because that's what all the data is */
 	MDE_Pointer *data_ptr_32 = reinterpret_cast<MDE_Pointer *>(data_ptr);
@@ -54,17 +52,26 @@ int ReadEventVLSBBank(char *parPtr, struct eventHeaderStruct *header_ptr, struct
 		eq_header_ptr->equipmentId = geo;
 		eq_header_ptr->equipmentBasicElementSize = 4;
 		
-       	//	*(messanger->getStream()) << "About to MDEBank ReadEvent ";
-	//	messanger->sendMessage(MDE_INFO);
-
 		dataStored += bank[geo]->ReadEvent();
 		
-       	//	*(messanger->getStream()) << "MDEBank ReadEvent ";
-	//	messanger->sendMessage(MDE_INFO);
-
-//           *(messanger->getStream()) << "Bank " << geo << " read " << dataStored << " words of data";
-//           messanger->sendMessage(MDE_INFO);
-
+		// Check the status of the Bank FIFO, where errors
+		// between the front end board and buffer board are flagged.
+		// There is a simple boolean check for "OK-ness":
+		if (!bank[geo]->FIFOOK())
+		  {
+		    bank[geo]->setGoodEvent(false);
+		    return 0;
+		  }
+		
+		/* // Uncomment to destroy data in damaged spills
+		// Check that the data is OK, if not - trash the data:
+		if( !bank[geo]->isGoodEvent() )
+		  {
+		  // No Return no data. Data buffers are automatically
+		  // cleared when the LVDS links are enabled.
+		  return 0;
+		  }
+		*/
 	}
 	/*! Returns the number of bytes read - need to increment data pointer accordinly
 	* All values are 32bit so must increment by dataStored/4 not sizeof(int) */

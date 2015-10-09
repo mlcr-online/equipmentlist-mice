@@ -66,6 +66,9 @@ void ArmV1495 ( char * parPtr ) {
         trCond_int = TRIGGER_TOF1_OR;
       }
 
+      if ((int)*V1495->ExtVetoEnable) 
+        trCond_int |= EXTERNALVETO_ENABLE;
+
       trigger->setParams("TriggerLogicCtrl", trCond_int);
     }
   } catch(MiceDAQException lExc) {

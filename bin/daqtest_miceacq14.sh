@@ -20,7 +20,7 @@ testEq V1290 11090000
 
 # TOF fADCs
 # In case the HV of the PMTs is ON
-export ZSThresholdV1724=200
+export ZSThresholdV1724=2000
 
 # In case the HV of the PMTs is OFF
 #export ZSThresholdV1724=30

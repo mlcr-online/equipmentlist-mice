@@ -482,7 +482,7 @@ bool testV1731(int ba) {
   if ( !fadc.Arm() )
     return false;
 
-  int memSizeFadc1 = fadc.getMaxMemUsedBLT(nEvents);
+  int memSizeFadc1 = fadc.getMaxMemUsedBLT(nEvents+1);
   MDE_Pointer* data = (MDE_Pointer*) malloc (memSizeFadc1);
   std::cout << "Memory alocated: " << memSizeFadc1 << "(" << fadc.getMaxMemUsed(nEvents) << ")" << std::endl;
   fadc.setDataPtr(data);
@@ -581,6 +581,19 @@ bool testVCB(int ba) {
 }
 
 //////////////////////  VRB  ///////////////////////////////////
+#include "MDfragmentDBB.h"
+bool processEventVRB(MDE_Pointer *dataPtr, int nbr) {
+
+  MDfragmentDBB fr;
+  fr.SetDataPtr(dataPtr, nbr);
+  std::cout << "NBR: " << nbr << std::endl; 
+  fr.Dump();
+  if (fr.GetHitCount())
+    return false;
+
+  return true;
+}
+
 
 bool testVRB(int ba) {
   MDEvRB vrb;
@@ -594,17 +607,30 @@ bool testVRB(int ba) {
   if (!vrb.Arm())
     return false;
 
+  int memSizeVrb = vrb.getMaxMemUsed();
+  MDE_Pointer* data = (MDE_Pointer*) malloc (memSizeVrb);
+  std::cout << "Memory alocated: " << memSizeVrb << std::endl;
+  vrb.setDataPtr(data);
+
+  vrb.StartDBBReadout();
+
   for (int dbbId=1; dbbId<7; dbbId++) {
     if (vrb.getNTriggers(dbbId))
      return false;
 
-    if (vrb.getNumDataWords(dbbId))
+    int nbr = vrb.GetDBBData(dbbId);
+    int ndw = vrb.getNumDataWords(dbbId);
+
+//    if (!processEventVRB(data, nbr))
+    if (nbr || ndw!=4)
       return false;
   }
 
+  free(data);
   if (!vrb.DisArm())
     return false;
 
+  std::cout << "OK\n";
   usleep(1000);
   return true;
 }

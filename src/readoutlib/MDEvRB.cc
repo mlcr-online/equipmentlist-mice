@@ -131,7 +131,7 @@ int MDEvRB::GetDBBData(unsigned int dbbId) {
   int nbRead = 0;
 
   // Make sure that the data transmission between the VRB and the DBBs
-  // is complate.
+  // is complated.
   while (this->getTransmissionStatus() == 1) {};
 
   if (getDBBStatus(dbbId))
@@ -339,7 +339,7 @@ bool MDEvRB::softwareClear() {
 }
 
 int MDEvRB::getMaxMemUsed(int nEvents) {
-  return 0;
+  return 16384*(*this)["N_DBBs"];
 }
 
 int MDEvRB::getNTriggers(unsigned int dbbId) {

@@ -15,6 +15,7 @@ typedef struct {
   char   *TOF1Mask;
   char   *TOF2Mask;
   long32 *PartTrVetoLenght;
+  long32 *ExtVetoEnable;
 } V1495_ParType;
 
 

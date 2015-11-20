@@ -55,19 +55,20 @@ int ReadEventVLSBBank(char *parPtr, struct eventHeaderStruct *header_ptr, struct
 		dataStored += bank[geo]->ReadEvent();
 		
 
-		// DO NOT USE, FIFOOK not reliable.
 		// Check the status of the Bank FIFO, where errors
 		// between the front end board and buffer board are flagged.
 		// There is a simple boolean check for "OK-ness":
-		//if (!bank[geo]->FIFOOK())
-		//  {
-		//    MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();
-		//    messanger->sendMessage("FIFO not reported as OK, deleting bank data", MDE_ERROR);
-		//    bank[geo]->setGoodEvent(false);
-		//    return 0;
-		//  }
+		if (!bank[geo]->FIFOOK())
+		  {
+		    MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();
+		    messanger->sendMessage("FIFO not reported as OK, deleting bank data", MDE_ERROR);
+		    bank[geo]->setGoodEvent(false);
+		    return 0;
+		  }
 		
 		/* // Uncomment to destroy data in damaged spills
+		   // Note that normally a single data bank is deleted, which
+		   // is enough to throw an unpacker exception.
 		// Check that the data is OK, if not - trash the data:
 		if( !bank[geo]->isGoodEvent() )
 		  {

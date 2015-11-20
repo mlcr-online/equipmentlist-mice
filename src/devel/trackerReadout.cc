@@ -6,6 +6,8 @@
 #include <string>
 #include <time.h> // For checking spills
 
+
+#include "MiceDAQMessanger.hh"
 #include "MDEv977.hh"
 #include "MDEVLSB.hh"
 #include "MDEVLSBBank.hh"

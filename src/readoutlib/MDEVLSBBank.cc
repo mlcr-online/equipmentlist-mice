@@ -119,6 +119,9 @@ int  MDEVLSBBank::ReadFIFOStatus()
   // Bit shift by bank ID to get to something eaisily comparable..
   uint32_t aligned = (mde_data_32_ & 0xFFFFF) >> BankID;
 
+  aligned &= VLSB_FIFOEmpty | VLSB_FIFOFull | VLSB_DataTimeout | VLSB_CRCError |
+		  VLSB_ClockPhaseError;
+
   //MESSAGESTREAM << "Read: " << std::hex <<  mde_data_32_ << "    shifted: " <<   aligned << "  by: " << std::dec << BankID;
   //mde_messanger_->sendMessage(MDE_INFO);
 

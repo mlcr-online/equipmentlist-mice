@@ -76,6 +76,7 @@ int main(int argc, char** argv) {
   sigset_t intmask;
   sigemptyset(&intmask);
   sigaddset(&intmask, SIGINT);
+  sigaddset(&intmask, SIGWINCH);
   signal(SIGINT, function_interrupt);
 
   // Setup VME Controller:
@@ -272,6 +273,12 @@ int main(int argc, char** argv) {
 		      if (FIFOStatus & VLSB_DataTimeout) data_timeout_th1d.Fill(bankUID);
 		      if (FIFOStatus & VLSB_CRCError) crc_error_th1d.Fill(bankUID);
 		      if (FIFOStatus & VLSB_ClockPhaseError) clkphase_error_th1d.Fill(bankUID);
+
+		      if (!it->FIFOOK())
+		      {
+		      		MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();
+		      		messanger->sendMessage("FIFO not reported as OK, deleting bank data", MDE_ERROR);
+		      }
 
 		      // Read the Bank Data - Update NWords read..
 		      it->setDataPtr(&(bankData[0]));

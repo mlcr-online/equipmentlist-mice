@@ -1,7 +1,6 @@
 #include <iostream>
 #include <sstream>
 
-
 #include "MDEv2718.hh"
 #include "MDEv977.hh"
 
@@ -9,7 +8,6 @@
 #include "equipmentList_common.hh"
 
 // Tracker HW
-#include "MDEVLSBMaster.hh"
 #include "MDEVLSB.hh"
 #include "MDEVLSBBank.hh"
 
@@ -23,14 +21,19 @@
 #include "TH2I.h"
 #include "TCanvas.h"
 
+#define N_VLSB 8
+#define N_BANK 4
+
 using namespace std;
+const std::vector<uint32_t> VLSBAddresses{0x10000000, 0x20000000, 0x30000000, 0x40000000,
+    0x18000000, 0x28000000, 0x38000000, 0x48000000};
 
 int main (int argc, char** argv)
 {
-	std::cout << "Tracker Test" << std::endl;
+    std::cout << "Tracker Test" << std::endl;
+    int nEvents = 100;
 
-	int nEvents = 100;
-  if (argc == 2 ) {
+    if (argc == 2 ) {
     stringstream ss;
     ss << argv[1];
     ss >> nEvents;
@@ -49,127 +52,95 @@ int main (int argc, char** argv)
     if ( !controler.Arm() )
       return 0;
 
-//////////////////////////////////////////////////////////////////////////////
+    std::vector<MDE_Pointer> bankData(10 * 130944);
+    std::vector<MDEVLSB> VLSBs;
+    std::vector<MDEVLSBBank> VLSBBanks;
 
-    MDEv977 ioReg;
-    ioReg.setParams("GEO", 3)("BaseAddress", 0x50000000);
+    const uint32_t VLSBOffset (8);
+    // Construct and Set parameters.
+    // Note that the last board in the set is set as master (by convention).
+    for (int i = 0; i < N_VLSB; i++) {
 
-    if ( !ioReg.ArmTriggerReceiver() )
-      return false;
+      int VLSB_id = i + VLSBOffset;
+      VLSBs.push_back(MDEVLSB());
+      VLSBs.back().setParams("GEO", VLSB_id * 4)
+	("BaseAddress", VLSBAddresses.at(i))
+	("Master", i == (N_VLSB - 1))
+	("UseInternalTrigger", 1);
+      VLSBs.back().setDataPtr(&bankData[0]);
 
-    if ( !ioReg.ArmPartTriggerSelector("TOF1") )
-      return false;
-
-    if ( !ioReg.ArmTrailer() )
-      return false;
-
-    MDE_Pointer* data_tr = new MDE_Pointer[256];
-    ioReg.setDataPtr(data_tr);
-
-//////////////////////////////////////////////////////////////////////////////
-
-    MDEVLSBMaster VLSBMaster;
-    VLSBMaster.SetParams("BaseAddress", 0x48000000);
-    VLSBMaster.Arm();
+      for (int j = 0; j < N_BANK; j++) {
+	VLSBBanks.push_back(MDEVLSBBank());
+	VLSBBanks.back().setParams("GEO", VLSB_id * 4 + j)
+	  ("BaseAddress", VLSBAddresses.at(i))
+	  ("VLSBid", VLSB_id)
+	  ("VLSBBank", j);
+	VLSBBanks.back().setDataPtr(&bankData[0]);
+      }
+    }
     
-    MDEVLSB vlsb;
-    vlsb.SetParams("BaseAddress", 0x48000000);
-    vlsb.Arm();
+    MDEVLSB & VLSBMaster = VLSBs.back();
+    
+    for (auto it = VLSBs.begin(); it != VLSBs.end(); ++it) it->Arm();
+    for (auto it = VLSBBanks.begin(); it != VLSBBanks.end(); ++it) it->Arm();
 
-    MDEVLSBBank bank;
-    bank.SetParams("BaseAddress", 0x48000000);
-    bank.SetParams("BankNumber", 0);
-    bank.Arm();
-     
+    TH2D adc_th2d("adcs","adcs", 8192, -0.5, 8191.5, 256, -0.5, 255.5);
+    MDfragmentVLSB vlsbfragment;
 
+    VLSBMaster.SetupTriggerWindow(0, 0);
+    VLSBMaster.SetupInternalTrigger(0x800, 40);
+    VLSBMaster.SetupSpillLength(0x3FFFF);
 
-    int memSizeTr = 128*300*1024;
-    MDE_Pointer * data_vlsbbank = new MDE_Pointer[memSizeTr];
-    bank.setDataPtr(data_vlsbbank);
+    VLSBMaster.DisableTrigger();
+    for (auto it = VLSBs.begin(); it != VLSBs.end(); ++it) it->DisableLVDS();
 
-//////////////////////////////////////////////////////////////////////////////
+    for (auto i (0); i<100; i++)
+      {
+	std::cout << "-------------------------------------------------" << std::endl;
+	// Do some readout proces...
+	for (auto it = VLSBs.begin(); it != VLSBs.end(); ++it) it->EnableLVDS();
+	VLSBMaster.EnableTrigger();
 
-MDfragmentVLSB vlsbfragment;
+	sleep (1);
 
-//////////////////////////////////////////////////////////////////////////////
+	VLSBMaster.DisableTrigger();
+	for (auto it = VLSBs.begin(); it != VLSBs.end(); ++it) it->DisableLVDS();
 
-TCanvas *c1 = new TCanvas;
-c1->cd(0);
-TH2I * vlsb_adchist = new TH2I("adchist", "", 128, -0.5, 127.5, 256, -0.5, 255.5); // Smart man!
+	std::cout << "Triggers: " << VLSBMaster.GetTriggerCount() << std::endl;
 
-int spillCount=0;
-int nbStored = 0;
-    while (spillCount<nEvents) {
-      std::cout << "\n \nGenerating Spill gate " << spillCount << " ..." << std::endl;
-//       trigger.softwareStart();
-      bool done = false;
-      while (!done) {
-        if ( ioReg.EventArrivedTriggerReceiver() ) {
-          ioReg.ReadEventTriggerReceiver();
-          if (ioReg.getEventType() == START_OF_BURST) {
-            std::cout << "Event Arrived. Event type is " << ioReg.getEventTypeAsString() << std::endl;
-            VLSBMaster.ReadEventVLSBMasterTrailer();
+	for (auto it = VLSBBanks.begin(); it != VLSBBanks.end(); ++it)
+	  {
+	    const int bankUID = it->getParam("GEO");
+	    it->setDataPtr(&(bankData[0]));
+	    int nwords = it->ReadEvent();
 
-            ioReg.ReadEventTrailer();
-           
-          } else if (ioReg.getEventType() == PHYSICS_EVENT) {
-            std::cout << "Event Arrived. Event type is " << ioReg.getEventTypeAsString() << std::endl;
-           
-           VLSBMaster.ReadEventVLSBMaster();
-	   vlsb.ReadEvent("READOUT");
-           nbStored = bank.ReadEvent();
-
-	   //Use the fragment output:
-           vlsbfragment.SetDataPtr(data_vlsbbank, nbStored);
-
-	   for (int i=0; i<3*128; i++)
-	   {
-           	std::cout << std::dec << " E:" << vlsbfragment.GetEventNum(i)
-	                  << " C:" << vlsbfragment.GetChannel(i)
-                          << " A:" << vlsbfragment.GetAdc(i)
-			  << std::endl;
-	   }
-
-           for (int i=0; i<nbStored/4; i++)
-           {
-		vlsb_adchist->Fill(vlsbfragment.GetChannel(i), vlsbfragment.GetAdc(i));
-	   }
-
-            nbStored += ioReg.ReadEventTrailer();
-          } else if (ioReg.getEventType() == END_OF_BURST){
-            std::cout << "Event Arrived. Event type is " << ioReg.getEventTypeAsString() << std::endl;
-
-            vlsb.ReadEvent("ACQUIRE");
-            VLSBMaster.ReadEventVLSBMasterTrailer();
-
-            ioReg.ReadEventTrailer();
-            done =true;
-          }
-        }
+	    std::cout << "bankUID:" << bankUID << "  nwords:" << nwords << std::endl;
+	    
+	    // Extract Data:
+	    if (nwords>0)
+	      {
+		// Process the data fragment..
+		vlsbfragment.SetDataPtr(&(bankData[0]), nwords*4);
+		for (int i=0; i<nwords; i++)
+		  {
+		    int ChannelUID = bankUID*128 + vlsbfragment.GetChannel(i);
+		    adc_th2d.Fill(ChannelUID, vlsbfragment.GetAdc(i));
+		  }
+	      }
+	  }
       }
 
-    vlsb_adchist->Draw("COL");
-    spillCount++;
-  }
+    adc_th2d.SaveAs("test.C");
 
+  for (auto it = VLSBBanks.begin(); it != VLSBBanks.end(); ++it)
+    it->DisArm();
 
-c1->SaveAs("adchist.png");
+  // Perform Arming Process VLSBs:
+  for (auto it = VLSBs.begin(); it != VLSBs.end(); ++it)
+    it->DisArm();
 
-
-//////////////////////////////////////////////////////////////////////////////
-// Disarming... 
-
-
-    delete data_vlsbbank;
-
-    if ( !vlsb.DisArm() )
-      return 0;
-
-   if ( !VLSBMaster.DisArm() )
-      return 0;
-
-   if ( !controler.DisArm() )
-      return 0;
+  if ( !controler.DisArm() )
+    return 0;
 
 } catch (MiceDAQException e) {
     std::cout << e.GetLocation() << std::endl;

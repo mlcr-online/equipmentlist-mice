@@ -33,7 +33,13 @@ bool MDEVLSB::Arm()
   if ( (*this)["Master"] )
     {
       Status &= this->DisableTrigger() ;
+      SetupInternalTrigger(0,0);
     }
+
+  // Read back firmware versions:
+  MESSAGESTREAM << "FirmwareVersion: " << std::hex << GetFirmwareV()
+		<< std::dec << std::endl;
+  mde_messanger_->sendMessage(MDE_INFO);
 
 
   if ( Status )
@@ -128,16 +134,16 @@ bool MDEVLSB::DisableLVDS()
 }
 bool MDEVLSB::EnableLVDS()
 {
-	// Ensure no zero suppression is set to 1:
-	mde_current_address_ = mde_base_address_ + VLSB_TRIGGER_CTL;
-	mde_data_32_ = VLSBTriggerCtl::VLSB_NoZeroSuppression;
+  // Ensure no zero suppression is set to 1:
+  mde_current_address_ = mde_base_address_ + VLSB_TRIGGER_CTL;
+  mde_data_32_ = VLSBTriggerCtl::VLSB_NoZeroSuppression;
 
 	mde_vmeStatus_ = VME_WRITE_32( mde_current_address_, mde_data_32_ );
 
-	  if ( mde_vmeStatus_ != cvSuccess ) {
-	    mde_messanger_->sendMessage(this, "Failed to set no zero suppression is set to 1", MDE_FATAL);
-	    return false;
-	  }
+  if ( mde_vmeStatus_ != cvSuccess ) {
+    mde_messanger_->sendMessage(this, "Failed to set no zero suppression is set to 1", MDE_FATAL);
+    return false;
+  }
 
   // Write to the bus to attempt to enable the LVDS
   mde_current_address_ = mde_base_address_ + VLSB_DATA_ENABLE;
@@ -178,8 +184,8 @@ bool MDEVLSB::EnableTrigger()
   mde_data_32_ = VLSBTriggerCtl::VLSB_SpillEnable | VLSBTriggerCtl::VLSB_NoZeroSuppression;
   if ( (*this)["UseInternalTrigger"] )
     {
-      // Nothing in here yet.
-	  // TODO: Internal Trigger Modes.
+      // For internal, do not set ExternalTrigger Bit, Continuos Spill or Acceptence window.
+      // mde_data_32_ |= 0x0;
     }
   else
     {
@@ -197,6 +203,70 @@ bool MDEVLSB::EnableTrigger()
   else
     {
 	  //mde_messanger_->sendMessage(this,"Trigger Enabled \n", MDE_INFO);
+      return true;
+    }
+}
+
+bool MDEVLSB::SetupTriggerWindow(int open, int close)
+{
+  mde_current_address_ = mde_base_address_ + VLSB_ACC_WINDOW;
+  mde_data_32_ = 0x51F01;//(windowOpen & 0x1F) + ((windowClose & 0x1F) << 8);
+
+  mde_vmeStatus_ = VME_WRITE_32( mde_current_address_, mde_data_32_ );
+  
+  if ( mde_vmeStatus_ != cvSuccess ) 
+    {
+      mde_messanger_->sendMessage(this, "Failed to set trigger window", MDE_FATAL);
+      return false;
+    }
+  else
+    {
+	    mde_messanger_->sendMessage(this,"Set trigger window", MDE_INFO);
+      return true;
+    }
+}
+
+
+bool MDEVLSB::SetupSpillLength(unsigned int length)
+{
+  mde_current_address_ = mde_base_address_ + VLSB_SPILL_LENGTH;
+  mde_data_32_ = length; // Spill Length
+
+  mde_vmeStatus_ = VME_WRITE_32( mde_current_address_, mde_data_32_ );
+  
+  if ( mde_vmeStatus_ != cvSuccess ) 
+    {
+      mde_messanger_->sendMessage(this, "Failed to set spill length", MDE_FATAL);
+      return false;
+    }
+  else
+    {
+      MESSAGESTREAM << "Set spill length to: " << std::hex <<  mde_data_32_ << " ("
+                    << std::dec << ((mde_data_32_ * 18.8) / 1000000.0) << "ms )" << std::endl;
+      mde_messanger_->sendMessage(MDE_INFO);
+      return true;
+    }
+}
+
+bool MDEVLSB::SetupInternalTrigger(int period, int triggers)
+{
+  mde_current_address_ = mde_base_address_ + VLSB_N_GEN_TRIGGERS;
+
+  // Bit shifting triggers by 17, since 16 results in 1/2 as many expected triggers..
+  mde_data_32_ = (period & 0xFFFF) + ((triggers & 0xFFFF) << 17);
+
+  mde_vmeStatus_ = VME_WRITE_32( mde_current_address_, mde_data_32_ );
+
+  if ( mde_vmeStatus_ != cvSuccess ) 
+    {
+      mde_messanger_->sendMessage(this, "Failed to setup internal trigger ", MDE_FATAL);
+      return false;
+    }
+  else
+    {
+      MESSAGESTREAM << "Setup internal trigger to: " << std::hex <<  mde_data_32_ << " ("
+                    << std::dec << std::endl;
+      mde_messanger_->sendMessage(MDE_INFO);
       return true;
     }
 }

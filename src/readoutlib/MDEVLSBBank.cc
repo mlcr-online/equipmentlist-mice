@@ -200,19 +200,19 @@ bool MDEVLSBBank::ReadBankData(MDE_Pointer *dataPtr, uint32_t BankLength)
 
 	for (uint i=0; i<BankLength; i++) Addresses[i] = mde_current_address_+ 4*i;
 
-	timespec time_start, time_end;
-	clock_gettime(CLOCK_MONOTONIC, &time_start);
+	//timespec time_start, time_end;
+	//clock_gettime(CLOCK_MONOTONIC, &time_start);
 
 	// Test of normall read:
 	VME_MULTIREAD_32(&(Addresses[0]), dataPtr, BankLength);
 	//for (uint32_t i(0); i<BankLength; i++) VME_READ_32(Addresses[i], dataPtr+i );
 
 
-	clock_gettime(CLOCK_MONOTONIC, &time_end);
+	//clock_gettime(CLOCK_MONOTONIC, &time_end);
 
 	// Time Difference:
-	long diff_ns = time_end.tv_nsec - time_start.tv_nsec;
-	if (diff_ns < 0) diff_ns += 1000000000;
+	//long diff_ns = time_end.tv_nsec - time_start.tv_nsec;
+	//if (diff_ns < 0) diff_ns += 1000000000;
 
 	/*
 	MESSAGESTREAM << "ReadVME words:" << BankLength

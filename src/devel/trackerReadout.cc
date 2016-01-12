@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h> //  our new library
+#include <signal.h> // For retriving keyboard interrupts.
 #include <string>
 #include <time.h> // For checking spills
 
@@ -278,8 +278,8 @@ int main(int argc, char** argv) {
 
 		      if (!it->FIFOOK())
 		      {
-		      		MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();
-		      		messanger->sendMessage("FIFO not reported as OK, deleting bank data", MDE_ERROR);
+			MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();
+			messanger->sendMessage("FIFO not reported as OK, deleting bank data", MDE_ERROR);
 		      }
 
 		      // Read the Bank Data - Update NWords read..

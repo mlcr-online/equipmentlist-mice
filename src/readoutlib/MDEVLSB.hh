@@ -40,12 +40,17 @@ class MDEVLSB : public MiceDAQEquipment {
   bool DisableTrigger();
   bool EnableTrigger();
 
+  // Setup Internal Trigger Settings:
+  bool SetupTriggerWindow(int open, int close);
+  bool SetupInternalTrigger(int period, int triggers);
+  bool SetupSpillLength(unsigned int length);
+
   // Load the number of encoded triggers:
   int GetTriggerCount();
   int GetTriggerDataTDC();
 
 
-  //TODO:  Other functions:
+  // Other functions:
   int GetFirmwareV();
 
   IMPLEMENT_PARAMS(VLSBParams, MDEVLSB)

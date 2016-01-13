@@ -3,11 +3,11 @@
 #ifndef CONFIG_H
 #define CONFIG_H 1
 
-#define LINUX
+#define LINUX 
 
 #cmakedefine WITH_EPICS_INTERFACE
 
-#cmakedefine DATE_VERSION  "@DATE_VERSION@"
+#cmakedefine DATE_VERSION  "DATE_v@DATE_VERSION@ EqList_v@EQ_LIST_VERSION@"
 #cmakedefine EL_MICE_DIR   "@EL_MICE_DIR@"
 #cmakedefine DATE_FOUND    @DATE_FOUND@
 #cmakedefine EPICS_FOUND   @EPICS_FOUND@

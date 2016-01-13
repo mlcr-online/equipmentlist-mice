@@ -16,6 +16,8 @@ include(${EL_MICE_DIR}/build/FindMICEDATA.cmake)
 include(${EL_MICE_DIR}/build/FindUNPACKING.cmake)
 include(${EL_MICE_DIR}/build/FindROOT.cmake)
 
+EXEC_PROGRAM(git  ARGS  "describe --tags"      OUTPUT_VARIABLE  EQ_LIST_VERSION)
+
 if (DATE_FOUND)
 
   set(CMAKE_CXX_FLAGS "-O3 -Wall -std=c++0x ${DATE_CFLAGS}")

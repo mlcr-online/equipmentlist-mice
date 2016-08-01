@@ -34,7 +34,7 @@ void ArmVLSBBank(char *parPtr) {
 
 int ReadEventVLSBBank(char *parPtr, struct eventHeaderStruct *header_ptr, struct equipmentHeaderStruct *eq_header_ptr, datePointer *data_ptr) {
 
-	MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();		
+//	MiceDAQMessanger  *messanger  = MiceDAQMessanger::Instance();
 //       *(messanger->getStream()) << "Read Event VLSBBank ";
 	//messanger->sendMessage(MDE_INFO);
 

@@ -4,14 +4,19 @@
 #include "DATEIncludes.hh"
 #include "equipmentList_common.hh"
 
+
+#define HP_HEADER_TYPE_SHIFT 28
+#define HP_HEADER_TYPE       0xA
 #define EC_DATA_WORD_SIZE   4
-#define PV_TITLE_SHIFT     26
+#define PV_ID_SHIFT         0
 #define PV_TYPE_SHIFT      24
 #define PV_TYPE_INT         0
 #define PV_TYPE_DOUBLE      1
 #define PV_TYPE_STRING      2
+#define PV_ID_MASK    0xFF
+#define PV_TYPE_MASK        0xF
 #define PV_TITLE_MASK    0x3F
-#define PV_TYPE_MASK        3
+#define PV_TITLE_SHIFT     26
 
 typedef enum  EpicsClientPVTitle {
   EpicsClientPV_RunNumber          = 0x0,
@@ -24,7 +29,9 @@ typedef struct {
 
 #ifdef EPICS_FOUND
 
+  int SavePVInt(datePointer * data_ptr, int lIndex, u32 pv);
   int SavePVInt(datePointer * data_ptr, std::string pvTitle, u32 pv);
+  int SavePVDouble(datePointer * data_ptr, int lIndex, u32 pv);
   int SavePVDouble(datePointer * data_ptr, std::string pvTitle, double pv);
   int SavePVString(datePointer * data_ptr, std::string pvTitle, std::string pv);
 
